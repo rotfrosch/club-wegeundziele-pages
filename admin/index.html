@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Club-Verwaltung · Wege & Ziele</title>
+<link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand">
+      <h1>Club-Verwaltung</h1>
+      <p>Technischer Veröffentlichungsstand</p>
+    </div>
+    <div class="userbox">
+      <a class="btn btn-soft" href="../">← Portal</a>
+    </div>
+  </header>
+
+  <section class="panel">
+    <h2 style="margin-top:0">Maut & Länderinfo</h2>
+    <div id="versionBox"></div>
+
+    <h3>Länderstatus</h3>
+    <div style="overflow:auto">
+      <table>
+        <thead><tr><th>Land</th><th>Status</th><th>Geprüft</th><th>Revision</th></tr></thead>
+        <tbody id="countries"></tbody>
+      </table>
+    </div>
+
+    <p class="small">Dieser Bereich ist zunächst bewusst nur lesend. Veröffentlichung und redaktionelle Bearbeitung kommen im nächsten Schritt.</p>
+  </section>
+</main>
+
+<script type="module">
+import { supabase, getSession, hasPermission } from "../assets/auth.js";
+
+const session = await getSession();
+if (!session || !(await hasPermission("admin:manage").catch(() => false))) {
+  location.replace("../");
+} else {
+  const { data: s } = await supabase
+    .from("countrycheck_settings")
+    .select("online_version,development_version,release_notes,published_at")
+    .eq("app_key","countrycheck")
+    .single();
+
+  document.querySelector("#versionBox").innerHTML =
+    '<div class="notice ok"><b>Online:</b> ' + s.online_version +
+    '<br><b>Entwicklung:</b> ' + s.development_version +
+    '<br><b>Stand:</b> ' + s.release_notes + '</div>';
+
+  const { data: c } = await supabase
+    .from("countrycheck_countries")
+    .select("iso_code,country_name,flag,publish_status,last_checked,content_revision")
+    .order("country_name");
+
+  document.querySelector("#countries").innerHTML = (c || []).map(x =>
+    '<tr><td>' + x.flag + ' ' + x.country_name + '</td><td>' + x.publish_status +
+    '</td><td>' + (x.last_checked || '—') + '</td><td>' + x.content_revision + '</td></tr>'
+  ).join("");
+}
+</script>
+</body>
+</html>
