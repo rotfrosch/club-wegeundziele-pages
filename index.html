@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Campions Club · Wege & Ziele</title>
+<link rel="stylesheet" href="./assets/portal.css">
+</head>
+<body>
+<main class="shell">
+  <section id="loginView" class="panel login" hidden>
+    <div class="brand">
+      <h1>Campions Club</h1>
+      <p>Wege & Ziele · Mitgliederbereich</p>
+    </div>
+    <div id="loginNotice"></div>
+    <form id="loginForm">
+      <label for="email">E-Mail-Adresse</label>
+      <input id="email" type="email" autocomplete="email" required>
+      <label for="password">Passwort</label>
+      <input id="password" type="password" autocomplete="current-password" required>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <button class="btn-primary" type="submit">Anmelden</button>
+        <button class="btn-soft" type="button" id="magicLink">Anmeldelink per E-Mail</button>
+      </div>
+    </form>
+  </section>
+
+  <section id="portalView" hidden>
+    <header class="top">
+      <div class="brand">
+        <h1>Campions Club</h1>
+        <p>Deine Werkzeuge auf Wege & Ziele</p>
+      </div>
+      <div class="userbox">
+        <span id="userMail" class="small"></span>
+        <a id="adminLink" class="btn btn-soft" href="./admin/" hidden>Verwaltung</a>
+        <button id="logoutBtn" class="btn-soft">Abmelden</button>
+      </div>
+    </header>
+
+    <div id="portalNotice"></div>
+    <section id="moduleGrid" class="modules" aria-live="polite"></section>
+    <div class="footer">© 2026 · Helmut & Claudia · Campions Club</div>
+  </section>
+</main>
+
+<script type="module">
+import { supabase, hasPermission } from "./assets/auth.js";
+
+const loginView = document.querySelector("#loginView");
+const portalView = document.querySelector("#portalView");
+const loginForm = document.querySelector("#loginForm");
+const loginNotice = document.querySelector("#loginNotice");
+const portalNotice = document.querySelector("#portalNotice");
+const moduleGrid = document.querySelector("#moduleGrid");
+const adminLink = document.querySelector("#adminLink");
+const userMail = document.querySelector("#userMail");
+
+const note = (el, text, ok=false) => {
+  el.innerHTML = text ? '<div class="notice ' + (ok ? 'ok' : '') + '">' + text + '</div>' : '';
+};
+const statusLabel = s => s === "live" ? "Online" : s === "hidden" ? "Ausgeblendet" : "In Vorbereitung";
+
+async function showPortal(session){
+  loginView.hidden = true;
+  portalView.hidden = false;
+  userMail.textContent = session.user.email || "";
+
+  const isAdmin = await hasPermission("admin:manage").catch(() => false);
+  adminLink.hidden = !isAdmin;
+
+  const { data: modules, error } = await supabase
+    .from("club_modules")
+    .select("slug,name,description,path,icon,status,sort_order")
+    .order("sort_order");
+
+  if (error) {
+    note(portalNotice, "Die Module konnten nicht geladen werden.");
+    return;
+  }
+
+  const { data: settings } = await supabase
+    .from("countrycheck_settings")
+    .select("online_version,development_version")
+    .eq("app_key","countrycheck")
+    .maybeSingle();
+
+  moduleGrid.innerHTML = (modules || []).map(m => {
+    const live = m.status === "live";
+    const preview = isAdmin && m.slug === "countrycheck";
+    const clickable = live || preview;
+    const version = m.slug === "countrycheck" && settings
+      ? (live ? "Version " + settings.online_version : "Entwicklung " + settings.development_version)
+      : "";
+
+    const card =
+      '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
+      '<div><div class="icon">' + (m.icon || '•') + '</div><h2>' + m.name + '</h2><p>' + m.description + '</p></div>' +
+      '<div class="meta"><span class="status ' + m.status + '">' + statusLabel(m.status) + '</span><span class="small">' + version + '</span></div>' +
+      '</article>';
+
+    return clickable ? '<a class="module-link" href=".' + m.path + '/">' + card + '</a>' : card;
+  }).join("");
+}
+
+async function boot(){
+  const { data } = await supabase.auth.getSession();
+  if (data.session) {
+    const allowed = await hasPermission("campions-club:view").catch(() => false);
+    const admin = await hasPermission("admin:manage").catch(() => false);
+    if (allowed || admin) return showPortal(data.session);
+    await supabase.auth.signOut();
+    note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
+  }
+  loginView.hidden = false;
+}
+
+loginForm.addEventListener("submit", async e => {
+  e.preventDefault();
+  note(loginNotice, "Anmeldung wird geprüft …", true);
+  const email = document.querySelector("#email").value.trim();
+  const password = document.querySelector("#password").value;
+
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    note(loginNotice, "Anmeldung nicht möglich. Bitte E-Mail und Passwort prüfen.");
+    return;
+  }
+
+  const allowed = await hasPermission("campions-club:view").catch(() => false);
+  const admin = await hasPermission("admin:manage").catch(() => false);
+  if (!allowed && !admin) {
+    await supabase.auth.signOut();
+    note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
+    return;
+  }
+  showPortal(data.session);
+});
+
+document.querySelector("#magicLink").addEventListener("click", async () => {
+  const email = document.querySelector("#email").value.trim();
+  if (!email) {
+    note(loginNotice, "Bitte zuerst die E-Mail-Adresse eintragen.");
+    return;
+  }
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      shouldCreateUser: false,
+      emailRedirectTo: window.location.origin + window.location.pathname
+    }
+  });
+  note(loginNotice, error ? "Der Anmeldelink konnte nicht versendet werden." : "Anmeldelink wurde versendet.", !error);
+});
+
+document.querySelector("#logoutBtn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  location.reload();
+});
+
+boot();
+</script>
+</body>
+</html>
