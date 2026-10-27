@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maut & Länderinfo · Campions Club</title>
+<link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+<main class="shell">
+  <header class="top">
+    <div class="brand">
+      <h1>Maut & Länderinfo Europa 🇪🇺</h1>
+      <p>Produktivaufbau · Entwicklung 1.0</p>
+    </div>
+    <div class="userbox">
+      <a class="btn btn-soft" href="../">← Portal</a>
+      <button id="logoutBtn" class="btn-soft">Abmelden</button>
+    </div>
+  </header>
+
+  <section class="panel">
+    <div class="notice ok"><b>Vorabversion:</b> Die vier geprüften Länder Kroatien, Österreich, Italien und Frankreich werden gerade aus V65 in die neue Datenstruktur übernommen.</div>
+    <p>Diese Seite ist absichtlich noch nicht für Mitglieder freigeschaltet. Erst nach vollständiger Datenübernahme und Gegenprüfung wird Version 1.0 veröffentlicht.</p>
+    <div id="countryStatus"></div>
+  </section>
+</main>
+
+<script type="module">
+import { supabase, getSession, hasPermission } from "../assets/auth.js";
+
+const session = await getSession();
+const member = session ? await hasPermission("campions-club:view").catch(() => false) : false;
+const admin = session ? await hasPermission("admin:manage").catch(() => false) : false;
+
+if (!session || (!member && !admin)) {
+  location.replace("../");
+} else {
+  const { data } = await supabase
+    .from("countrycheck_countries")
+    .select("flag,country_name,publish_status,last_checked")
+    .in("iso_code",["HR","AT","IT","FR"])
+    .order("country_name");
+
+  document.querySelector("#countryStatus").innerHTML = (data || []).map(c =>
+    '<p><b>' + c.flag + ' ' + c.country_name + '</b> · ' +
+    c.publish_status + ' · geprüft: ' + (c.last_checked || '—') + '</p>'
+  ).join("");
+}
+
+document.querySelector("#logoutBtn").addEventListener("click", async () => {
+  await supabase.auth.signOut();
+  location.replace("../");
+});
+</script>
+</body>
+</html>
