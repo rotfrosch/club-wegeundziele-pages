@@ -7,7 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/portal.css?v=20261028-4">
+<link rel="stylesheet" href="./assets/portal.css?v=20261028-5">
 </head>
 <body>
 <main class="shell">
@@ -84,12 +84,6 @@ const arrowIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path
 const fuelIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M3 21h14M7.5 6h5v4h-5V6ZM15 7h2l2 2.2V17a2 2 0 0 0 4 0v-6.5l-2-2" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 const roadIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 21 10 3M15.5 21 14 3M12 5.5v3M12 12v3M12 18.5V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 
-const moduleSubtitle = slug => slug === "camping-car-park"
-  ? "771 Stellplätze · Datenstand 26.07.2026"
-  : slug === "fuel-prices"
-    ? "Aktuelle Preise und Vergleiche"
-    : "Regeln, Vignetten und Umweltzonen";
-
 const moduleTitle = m => m.slug === "fuel-prices" ? "Benzinpreise in Europa" : m.name;
 
 async function showPortal(session){
@@ -110,16 +104,24 @@ async function showPortal(session){
     return;
   }
 
+  const { data: settings } = await supabase
+    .from("countrycheck_settings")
+    .select("online_version")
+    .eq("app_key","countrycheck")
+    .maybeSingle();
+
   moduleGrid.innerHTML = (modules || []).map(m => {
     const live = m.status === "live";
     const preview = isAdmin && m.slug === "countrycheck";
     const clickable = live || preview;
     const cardIcon = m.slug === "camping-car-park" ? '<span class="pin-icon">⌖</span>' : (m.slug === "fuel-prices" ? fuelIcon : roadIcon);
+    const version = m.slug === "countrycheck" && settings?.online_version ? "Version " + settings.online_version : "";
 
     const card =
       '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
       cardArtwork(m.slug) +
-      '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + moduleTitle(m) + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
+      '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + moduleTitle(m) + '</h2></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
+      '<div class="module-meta"><span class="status ' + m.status + '">' + (live ? 'Online' : 'In Vorbereitung') + '</span><span>' + version + '</span></div>' +
       '</article>';
 
     return clickable ? '<a class="module-link" href=".' + m.path + '/">' + card + '</a>' : card;
