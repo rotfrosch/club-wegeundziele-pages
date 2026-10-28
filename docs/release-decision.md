@@ -1,14 +1,13 @@
-# Offene Entscheidung: HTML-Version und Länderrevisionen
+# Entscheidungsvorlage: verbindliche Freigabezuordnung
 
-Die Datenbank meldet `online_version`, `development_version` und je Land `publish_status` sowie `content_revision`. Im Repository fehlt ein verbindliches Manifest, das einen bestimmten HTML-/Git-Stand den vier freigegebenen Länderrevisionen HR, AT, IT und FR zuordnet. Aus einem Modulstatus `live` oder vier vorhandenen Datensätzen darf diese Zuordnung nicht abgeleitet werden. Auch Bezeichnungen wie `published` sind ohne bestätigte Statusdefinition keine ausreichende Veröffentlichungsgarantie.
+Ein versioniertes Manifest und ein lokaler Validator sind jetzt implementiert: [Datenvertrag und Ablauf](release-manifest.md). Das erste Manifest ist ausdrücklich offen. Die frühere technische Lücke der fehlenden versionierten Zuordnung ist damit als Entwicklungswerkzeug bearbeitet; fachliche Freigaben und produktive Integration sind weiterhin offen.
 
-Vor einer Veröffentlichung sind ausdrücklich festzulegen:
+Vor einer verbindlichen Nutzung sind ausdrücklich zu entscheiden:
 
-1. Welche unveränderliche HTML-Version bzw. welcher Git-Commit veröffentlicht werden soll.
-2. Welche konkreten vier Länderrevisionen dazu gehören und welcher Status jeweils fachliche Freigabe bedeutet.
-3. Wer Quellenprüfung, Abnahme und Freigabe verantwortet und wie Rücknahme/Abweichungen dargestellt werden.
-4. Ob diese Zuordnung durch ein versioniertes Release-Manifest oder einen ausdrücklich vereinbarten Datenbankvertrag erfolgt.
+1. Welche tatsächlichen Revisionen von HR, AT, IT und FR zur referenzierten HTML-Datei gehören.
+2. Wer die unabhängige Quellenprüfung und wer die Freigabe verantwortet und wo dauerhafte Entscheidungsnachweise liegen.
+3. Ob der vorgeschlagene Datenvertrag (positive Revisionen, Statuswerte, Snapshotkette) verbindlich übernommen wird.
+4. Wie spätere Produktivaktivierung, Rücknahme und die Zuordnung zu alten Versionsnamen erfolgen. V65 darf nicht ohne gesonderten Nachweis dem neuen Manifest gleichgesetzt werden.
+5. Welche Review-/Signaturregeln verbindliche Personenidentität und Entscheidungsbefugnis belegen.
 
-Empfehlung zur Entscheidung: Ein versioniertes Manifest könnte HTML-Commit, Länderrevisionen, Prüftermine und Freigaben nachvollziehbar verknüpfen. Dieses Dokument implementiert ein solches Manifest nicht und legt keine Revisionen oder Freigaben fest. Jede Datenbankänderung und jede Veröffentlichung bleibt einem gesonderten Auftrag vorbehalten.
-
-Die vorhandenen juristischen Texte und Prüfsiegel im Ländercheck stammen aus dem Ausgangsstand. Technische Regressionstests ersetzen keine unabhängige Prüfung der Originalquellen und bestätigen keine rechtliche Richtigkeit.
+Eine vollständig bestandene technische Prüfung ersetzt keine dieser fachlichen Entscheidungen. Notwendige spätere Datenbankarbeit steht ausschließlich als [Vorschlag](database-integration-proposal.md) bereit. Keine Datenbankänderung, Veröffentlichung oder operative Länderfreigabe wurde ausgeführt.

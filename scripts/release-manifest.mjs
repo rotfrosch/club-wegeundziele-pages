@@ -72,11 +72,12 @@ export function validateManifest(manifest, {previous = null, today = new Date().
     if (object(prior)) {
       const sameContent = prior.content_revision === revision && previous.artifact?.html_version === a.html_version;
       if (approval.status === 'withdrawn') {
+        if (prior.approval?.status === 'approved') require(approval.evidence !== prior.approval.evidence, prefix+'Rücknahme braucht einen neuen Entscheidungsnachweis.');
         require(JSON.stringify(c.source_review) === JSON.stringify(prior.source_review), prefix+'Rücknahme muss den bisherigen Quellenprüfnachweis bewahren.');
         if (date(prior.approval?.decided_on) && date(approval.decided_on)) require(approval.decided_on >= prior.approval.decided_on, prefix+'Rücknahme liegt vor der vorherigen Entscheidung.');
         require(['approved','withdrawn'].includes(prior.approval?.status) && sameContent, prefix+'Rücknahme muss eine zuvor freigegebene, unveränderte Zuordnung betreffen.');
       }
-      if (approval.status === 'approved' && (!sameContent || prior.approval?.status !== 'approved' || JSON.stringify(c.source_review) !== JSON.stringify(prior.source_review))) {
+      if (approval.status === 'approved' && (!sameContent || prior.approval?.status !== 'approved' || JSON.stringify(c.source_review) !== JSON.stringify(prior.source_review) || JSON.stringify(approval) !== JSON.stringify(prior.approval))) {
         require(approval.evidence !== prior.approval?.evidence && text(approval.evidence), prefix+'Geänderter oder zurückgenommener Inhalt braucht eine neue Freigabeentscheidung.');
       }
       if (date(prior.approval?.decided_on) && date(approval.decided_on)) require(approval.decided_on >= prior.approval.decided_on, prefix+'Entscheidungsdatum läuft rückwärts.');

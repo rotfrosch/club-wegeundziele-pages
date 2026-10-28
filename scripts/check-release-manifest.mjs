@@ -35,6 +35,8 @@ try {
     const result = validateManifest(manifest,{previous});
     if (result.errors.length) throw Error(result.errors.join('\n'));
     const a = manifest.artifact;
+    const commit = execFileSync('git',['rev-parse','--verify',`${a.git_commit}^{commit}`],{cwd:root,stdio:['ignore','pipe','pipe']}).toString().trim();
+    if (commit !== a.git_commit) throw Error('Git-Referenz ist kein direktes Commitobjekt.');
     const gitBytes = execFileSync('git',['show',`${a.git_commit}:${a.path}`],{cwd:root,stdio:['ignore','pipe','pipe']});
     if (sha256(gitBytes) !== a.sha256) throw Error('Git-Commit und HTML-Hash widersprechen sich.');
     return {manifest,result};
@@ -44,6 +46,7 @@ try {
     throw Error('Arbeitskopie stimmt nicht mit der unveränderlichen HTML-Version überein.');
   }
   console.log(`Manifest ${manifest.sequence}: strukturell gültig; Freigabe ${result.ready?'vollständig':'OFFEN'}.`);
+  console.log(`HTML: ${manifest.artifact.html_version} · Git: ${manifest.artifact.git_commit}`);
   result.open.forEach(message=>console.log('- '+message));
   // Exit 2 distinguishes a valid, incomplete draft from malformed metadata (exit 1).
   if (requireApproved && !result.ready) process.exitCode = 2;

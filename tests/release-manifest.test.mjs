@@ -45,12 +45,12 @@ test('Withdrawal is valid, preserved in history and blocks readiness',()=>{
   const r=validate(m,prior);assert.deepEqual(r.errors,[]);assert.equal(r.ready,false);assert.ok(r.open.some(x=>x.includes('zurückgenommen')));
 });
 test('Withdrawal without reason is invalid',()=>{const prior=approved(),m=next(prior);m.status='withdrawn';m.countries.HR.approval.status='withdrawn';invalid(m,/Rücknahme braucht/,prior);});
-test('Withdrawal cannot leave manifest approved',()=>{const prior=approved(),m=next(prior);m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict'};invalid(m,/erfordert Manifeststatus withdrawn/,prior);});
+test('Withdrawal cannot leave manifest approved',()=>{const prior=approved(),m=next(prior);m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict',evidence:'TEST withdrawal 2'};invalid(m,/erfordert Manifeststatus withdrawn/,prior);});
 test('Withdrawal without prior approval is rejected',()=>{const m=copy(draft);m.status='withdrawn';m.countries.HR.approval.status='withdrawn';invalid(m,/ohne dokumentierte vorherige Freigabe/);});
 test('Changed HTML cannot inherit the old decision',()=>{const prior=approved(),m=next(prior);m.artifact.sha256='b'.repeat(64);m.artifact.html_version='sha256:'+m.artifact.sha256;invalid(m,/neue Freigabeentscheidung/,prior);});
 test('Changed revision cannot inherit the old decision',()=>{const prior=approved(),m=next(prior);m.countries.IT.content_revision=2;invalid(m,/neue Freigabeentscheidung/,prior);});
 test('Changed source review cannot inherit old approval',()=>{const prior=approved(),m=next(prior);m.countries.IT.source_review.reviewed_by='TEST second reviewer';invalid(m,/neue Freigabeentscheidung/,prior);});
-test('Known revision cannot be erased or decremented',()=>{const prior=approved();for(const rev of [null,0]){const m=next(prior);m.countries.IT.content_revision=rev;invalid(m,/Revision|Länderrevision/,prior);}});
+test('Known revision cannot be erased or decremented',()=>{const prior=approved();prior.countries.IT.content_revision=2;for(const rev of [null,1]){const m=next(prior);m.countries.IT.content_revision=rev;invalid(m,/Revision|Länderrevision/,prior);}});
 test('New snapshots require a sequential predecessor',()=>{const prior=approved(),m=next(prior);m.sequence=3;invalid(m,/Manifestsequenz/,prior);});
 test('Unknown countries and statuses are rejected',()=>{const m=copy(draft);m.countries.DE=copy(m.countries.HR);m.countries.HR.approval.status='live';invalid(m,/Genau HR|Freigabestatus/);});
 test('Reapproval after withdrawal requires a new decision',()=>{
@@ -58,7 +58,7 @@ test('Reapproval after withdrawal requires a new decision',()=>{
   const m=next(prior);m.status='approved';m.countries.HR.approval={...m.countries.HR.approval,status:'approved',reason:null};invalid(m,/neue Freigabeentscheidung/,prior);
   m.countries.HR.approval.evidence='TEST new decision 3';assert.deepEqual(validate(m,prior).errors,[]);
 });
-test('Withdrawal cannot silently rewrite the source review',()=>{const prior=approved(),m=next(prior);m.status='withdrawn';m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict'};m.countries.HR.source_review.sources=[];invalid(m,/Quellenprüfnachweis bewahren/,prior);});
+test('Withdrawal cannot silently rewrite the source review',()=>{const prior=approved(),m=next(prior);m.status='withdrawn';m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict',evidence:'TEST withdrawal 2'};m.countries.HR.source_review.sources=[];invalid(m,/Quellenprüfnachweis bewahren/,prior);});
 test('CLI validates actual Git/HTML bytes and distinguishes incomplete release',()=>{
   const cli=join(root,'scripts/check-release-manifest.mjs');
   const run=(...args)=>spawnSync(process.execPath,[cli,...args],{cwd:root,encoding:'utf8'});
@@ -72,3 +72,6 @@ test('CLI validates actual Git/HTML bytes and distinguishes incomplete release',
     writeFileSync(p,JSON.stringify({...prior,module:'tampered'}));assert.match(run(file).stderr,/Vorgängermanifests widerspricht/);
   } finally {rmSync(dir,{recursive:true,force:true});}
 });
+
+test('Withdrawal requires a distinct decision reference',()=>{const prior=approved(),m=next(prior);m.status='withdrawn';m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict'};invalid(m,/neuen Entscheidungsnachweis/,prior);});
+test('Changing approval responsibility cannot reuse the old evidence',()=>{const prior=approved(),m=next(prior);m.countries.HR.approval.responsible='TEST different approver';invalid(m,/neue Freigabeentscheidung/,prior);});

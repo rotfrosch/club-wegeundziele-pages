@@ -16,6 +16,12 @@ Die Tests umfassen 18 Browser-Regressionen, sämtliche 126 Kombinationen sichtba
 
 ## Entwicklungs- und Veröffentlichungsstand
 
-`club_modules.status = live` beschreibt den Modulstatus und bestätigt keine vollständige Länderfreigabe. Die Oberfläche zeigt die gemeldeten Länderstatus und Revisionen getrennt von der Online-Version. Die verbindliche Zuordnung dieser Daten zu genau dieser HTML-Datei ist offen. Fehlende oder fehlerhafte Abfragen werden nicht als Freigabe gewertet.
+`club_modules.status = live` beschreibt den Modulstatus und bestätigt keine vollständige Länderfreigabe. Die Oberfläche zeigt die gemeldeten Länderstatus und Revisionen getrennt von der Online-Version. Das neue versionierte [Release-Manifest](docs/release-manifest.md) verknüpft den HTML-Commit und Hash mit explizit offenen Länderrevisionen und Freigaben. Die tatsächliche fachliche Zuordnung ist weiterhin offen; die produktive Datenbankintegration ist noch nicht implementiert. Fehlende oder fehlerhafte Abfragen werden nicht als Freigabe gewertet.
 
 Dieser Branch ist ein Entwicklungskandidat. Der bestehende veröffentlichte V65-Stand wird durch diese Arbeit weder überschrieben noch neu veröffentlicht. Kein Merge, Deployment oder Datenbankeingriff gehört zum Auftrag. Eine spätere Veröffentlichung benötigt eine ausdrückliche Entscheidung; siehe [Entscheidungsvorlage](docs/release-decision.md).
+
+## Freigabemanifest prüfen
+
+`node scripts/check-release-manifest.mjs` prüft den vorhandenen Entwurf offline gegen Git und HTML. `node scripts/check-release-manifest.mjs --require-approved` liefert für diesen ausdrücklich offenen Entwurf erwartungsgemäß Exitcode 2. Ungültige Daten liefern 1. Eine vollständige Freigabe kann nicht aus dem Modulstatus abgeleitet werden. `npm --prefix tests test` führt jetzt zusätzlich die Manifesttests aus.
+
+Ablauf für Freigabe, Aktualisierung und Rücknahme: [Manifestvertrag](docs/release-manifest.md). Spätere Datenbankänderungen sind ausschließlich als [Vorschlag](docs/database-integration-proposal.md) dokumentiert.
