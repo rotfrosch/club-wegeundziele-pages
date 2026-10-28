@@ -67,7 +67,7 @@ test('CLI validates actual Git/HTML bytes and distinguishes incomplete release',
   try {
     const file=join(dir,'bad.json'),m=copy(draft);m.artifact.sha256='c'.repeat(64);m.artifact.html_version='sha256:'+m.artifact.sha256;
     writeFileSync(file,JSON.stringify(m));const result=run(file);assert.equal(result.status,1);assert.match(result.stderr,/Git-Commit und HTML-Hash/);
-    const prior=approved(),p=join(dir,'previous.json');writeFileSync(p,JSON.stringify(prior));
+    const prior=approved();prior.artifact=JSON.parse(readFileSync(join(root,'releases/countrycheck/manifest-0002.json'))).artifact;const p=join(dir,'previous.json');writeFileSync(p,JSON.stringify(prior));
     const current=next(prior);current.previous={path:p,sha256:sha256(readFileSync(p))};writeFileSync(file,JSON.stringify(current));assert.equal(run(file,'--require-approved').status,0);
     writeFileSync(p,JSON.stringify({...prior,module:'tampered'}));assert.match(run(file).stderr,/Vorgängermanifests widerspricht/);
   } finally {rmSync(dir,{recursive:true,force:true});}

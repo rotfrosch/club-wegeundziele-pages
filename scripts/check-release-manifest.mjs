@@ -41,7 +41,7 @@ try {
     if (sha256(gitBytes) !== a.sha256) throw Error('Git-Commit und HTML-Hash widersprechen sich.');
     return {manifest,result};
   }
-  const {manifest,result} = check(paths[0] || 'releases/countrycheck/manifest-0001.json');
+  const {manifest,result} = check(paths[0] || 'releases/countrycheck/manifest-0002.json');
   if (sha256(readFileSync(safePath(manifest.artifact.path))) !== manifest.artifact.sha256) {
     throw Error('Arbeitskopie stimmt nicht mit der unveränderlichen HTML-Version überein.');
   }

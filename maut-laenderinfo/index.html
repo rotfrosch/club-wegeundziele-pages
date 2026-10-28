@@ -808,7 +808,7 @@ select{
       <div class="field-card country-card">
         <label for="country">🌍 Land</label>
         <div class="select-shell">
-          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option></select>
+          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien · ungeprüfter Entwurf</option></select>
         </div>
       </div>
 
@@ -885,6 +885,18 @@ select{
       </div>
     </div>
 
+    <fieldset id="esProfile" hidden style="margin-top:16px;border:1px solid #cbd6e1;border-radius:14px;padding:16px">
+      <legend>Spanien: Fahrzeugdaten zur Einzelprüfung</legend>
+      <p>Keine automatische Tarif- oder Zufahrtsfreigabe. Angaben aus den Fahrzeugpapieren übernehmen. Masse einschließlich 3.500 kg und über 3.500 kg getrennt prüfen; Höhenmessung und Achszählung des jeweiligen Betreibers beachten.</p>
+      <div class="controls">
+        <label>Fahrzeugklasse laut Papieren <input id="esClass" type="text" maxlength="30" placeholder="z. B. M1, N1; ggf. Aufbauart" style="width:100%"></label>
+        <label>Zulässige Gesamtmasse Zugfahrzeug (kg) <input id="esMass" type="number" min="1" step="1" style="width:100%"></label>
+        <label>Achsen Zugfahrzeug <input id="esAxles" type="number" min="2" max="10" step="1" style="width:100%"></label>
+        <label>Gesamthöhe (cm) <input id="esHeight" type="number" min="1" max="600" step="1" placeholder="einschließlich Aufbauten" style="width:100%"></label>
+        <label id="esTrailerField">Anhängerachsen <input id="esTrailerAxles" type="number" min="1" max="10" step="1" style="width:100%"></label>
+      </div>
+      <p id="esProfileStatus" role="status"></p>
+    </fieldset>
     <div class="helper-row">
       <span class="helper-dot"></span>
       <div>
@@ -1153,6 +1165,80 @@ const frBase={
   }
 };
 
+
+const esFields=['esClass','esMass','esAxles','esHeight','esTrailerAxles'].map(id=>document.getElementById(id));
+let esVehicle='';
+function configureES(){
+  document.getElementById('esProfile').hidden=country.value!=='ES';
+  if(country.value!=='ES') return;
+  const v=vehicle.value, trailer=['carTrailer','m35Trailer','mHeavyTrailer'].includes(v);
+  document.getElementById('esTrailerField').hidden=!trailer;
+  if(v!==esVehicle){
+    esVehicle=v;
+    esFields.forEach(el=>el.value='');
+    // Only axes explicitly described by the selected profile are prefilled.
+    if(['m2','m3','m4'].includes(v)) document.getElementById('esAxles').value=v.slice(1);
+  }
+  document.getElementById('esProfileStatus').textContent=esProfileText();
+}
+function esProfileText(){
+  const trailer=['carTrailer','m35Trailer','mHeavyTrailer'].includes(vehicle.value);
+  const mass=document.getElementById('esMass'),axes=document.getElementById('esAxles'),height=document.getElementById('esHeight'),ta=document.getElementById('esTrailerAxles');
+  const required=[mass,axes,height,...(trailer?[ta]:[])];
+  if(!document.getElementById('esClass').value.trim()||required.some(x=>!x.value||!x.validity.valid)) return 'Fahrzeugdaten fehlen oder sind ungültig. Keine Tarif-, Tempo- oder Zufahrtsfreigabe.';
+  const heavy=['m2','m3','m4','mHeavyTrailer'].includes(vehicle.value);
+  const light=['m35','m35Trailer'].includes(vehicle.value);
+  if((heavy&&Number(mass.value)<=3500)||(light&&Number(mass.value)>3500)) return 'Masse widerspricht dem gewählten Wohnmobilprofil. Fahrzeugprofil prüfen. Keine Freigabe.';
+  if(['m2','m3','m4'].includes(vehicle.value)&& (vehicle.value==='m4'?Number(axes.value)<4:Number(axes.value)!==Number(vehicle.value.slice(1)))) return 'Achszahl widerspricht dem gewählten Profil. Keine Freigabe.';
+  return `Masse ${Number(mass.value)<=3500?'bis einschließlich 3.500 kg':'über 3.500 kg'}; ${axes.value} Achsen; ${height.value} cm Höhe${trailer?'; '+ta.value+' Anhängerachsen':''}. Betreiberklasse und zulässiges Tempo noch ungeprüft. Keine Zufahrtsfreigabe.`;
+}
+function currentES(){
+  const labels={car:'Pkw',carTrailer:'Pkw + Anhänger',m35:'Wohnmobil bis 3,5 t',m2:'Wohnmobil über 3,5 t · 2 Achsen',m3:'Wohnmobil über 3,5 t · 3 Achsen',m4:'Wohnmobil über 3,5 t · 4+ Achsen',m35Trailer:'Wohnmobil bis 3,5 t + Anhänger',mHeavyTrailer:'Wohnmobil über 3,5 t + Anhänger'};
+  if(!labels[vehicle.value])return null;
+  return {label:labels[vehicle.value]+' · Spanien (Entwurf)',toll:'Betreiberprüfung offen',tollNote:'Keine pauschale spanische Mautklasse oder Preisangabe',speed:'Fachprüfung offen',box:'Akzeptanzprüfung offen'};
+}
+const esSources=[
+ ['BOE – Reglamento General de Circulación','https://www.boe.es/buscar/act.php?id=BOE-A-2003-23514'],
+ ['DGT – amtliche Verkehrsinformation','https://www.dgt.es/'],
+ ['Verkehrsministerium – Netz und Konzessionen','https://www.transportes.gob.es/'],
+ ['Autopistas – betreiberspezifische Tarife','https://www.autopistas.com/'],
+ ['VIA-T – Systeminformationen','https://www.viat.es/']
+];
+// Research candidates only. No municipal access rule has been independently verified.
+const esZones=[
+ ['Madrid','https://www.madrid.es/'],['Barcelona','https://www.zbe.barcelona/'],
+ ['València','https://www.valencia.es/'],['Málaga','https://www.malaga.eu/'],
+ ['Sevilla','https://www.sevilla.org/'],['Bilbao','https://www.bilbao.eus/']
+];
+function renderDetailES(){
+  const titles={toll:'Maut',speed:'Geschwindigkeiten',overtake:'Überholverbote',box:'Mautboxen',special:'Besonderheiten und Umweltzonen',sources:'Quellen und Prüfstand',abbr:'Abkürzungen'};
+  detailTitle.textContent=titles[activeTab]+' Spanien · ungeprüfter Entwurf';
+  detailGrid.innerHTML='';
+  const warning='<p role="note"><b>Fachliche Prüfung und Freigabe offen.</b> Offizielle Quellen konnten wegen gesperrtem Internetzugriff nicht abgerufen werden. Keine bestätigten Regeln oder Preise; vor der Fahrt Einzelprüfung erforderlich.</p>';
+  const text={
+    toll:'<p>Jeden mautpflichtigen Abschnitt und Betreiber gesondert prüfen. Keine Übertragung eines Tarifs auf andere Betreiber. Fahrzeugklasse und Aufbauart, zulässige Masse, Achsen, gegebenenfalls Bereifung, betreiberspezifische Höhenmessung sowie Anhänger müssen nach der jeweiligen Tarifordnung zugeordnet werden. Die deutschen oder französischen Klassengrenzen sind keine spanische Tarifgrundlage. Strecke, Fahrtdatum und Zahlweise fehlen für eine Preisermittlung.</p>',
+    speed:'<p>Die aktuellen gesetzlichen Höchstgeschwindigkeiten sind noch nicht anhand des BOE und der DGT verifiziert. Pkw, Autocaravana laut Fahrzeugpapieren, andere Aufbauarten und Gespanne getrennt prüfen; insbesondere bis einschließlich und über 3.500 kg. Innerörtliche Straßenaufteilung, Straßenart und örtliche Beschilderung einbeziehen. Es werden deshalb keine verbindlichen Zahlen ausgegeben.</p>',
+    overtake:'<p>Allgemeine Überholverbote und besondere Verbote nach Fahrzeugart sind getrennt zu prüfen. Für ein Wohnmobil darf weder allein aus der Masse noch aus der Bezeichnung Pkw eine pauschale Ausnahme abgeleitet werden. Fahrzeugpapiere, Verkehrszeichen, Zusatzzeichen und aktuelle Streckenanordnungen prüfen.</p>',
+    box:'<p>VIA-T und den konkreten Mautboxvertrag auf das Fahrzeug und jeden Streckenbetreiber prüfen. Fahrzeugklasse, Achsen, Anhänger, Aktivierung, Gebühren und akzeptierte Spuren vorab bestätigen. Eine Systembezeichnung belegt keine landesweite Akzeptanz einer bestimmten ausländischen Box.</p>',
+    special:'<p>Kommunale Zufahrtsregeln, Registrierung ausländischer Kennzeichen, Emissionsnachweise, Ausnahmen und deren Gültigkeit sind einzeln zu prüfen. <b>Keine pauschale Einfahrtsfreigabe für deutsche Wohnmobile.</b> Die folgenden Orte sind eine unvollständige Recherche-Prüfliste; Bestand, Abgrenzung und Betrieb einer Zone sowie ihre Regeln sind hier nicht bestätigt.</p><label for="esZoneSearch">Umweltzonen-Prüfliste durchsuchen</label><input id="esZoneSearch" type="search" placeholder="Ort suchen" style="width:100%;padding:12px"><p id="esZoneCount" role="status"></p><div id="esZoneList"></div>',
+    sources:'<p>Erstellungsdatum: 28.10.2026 (Europe/Berlin). Quellenprüfung: nicht durchgeführt; Abrufversuche am 28.10.2026 durch Proxy mit HTTP 403 abgewiesen. Rechtsstand und Tarifgültigkeit daher unbekannt. Links sind Rechercheziele und keine Bestätigung. Erforderlich sind dokumentierte Rechtsstellen, Betreiber-Tarifstände und unabhängig bestätigte kommunale Regeln einschließlich ausländischer Kennzeichen und Ausnahmen.</p>'+esSources.map(([name,url])=>`<p><a href="${url}" target="_blank" rel="noopener noreferrer">${name}</a> · ungeprüft</p>`).join(''),
+    abbr:'<p>Arbeitsglossar, fachlich noch zu prüfen:</p><dl><dt>ZBE</dt><dd>Zona de Bajas Emisiones (Umweltzone)</dd><dt>DGT</dt><dd>Dirección General de Tráfico</dd><dt>MMA</dt><dd>Masa Máxima Autorizada (zulässige Gesamtmasse)</dd><dt>VIA-T</dt><dd>Bezeichnung eines elektronischen Mautsystems; keine Vertrags- oder Fahrzeugfreigabe.</dd></dl>'
+  };
+  detailText.innerHTML=warning+text[activeTab];
+  const p=document.createElement('p');p.textContent=esProfileText();detailText.append(p);
+  if(activeTab==='special'){
+    const input=document.getElementById('esZoneSearch');
+    const update=()=>{
+      const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLocaleLowerCase('de');
+      const rows=esZones.filter(([name])=>normalize(name).includes(normalize(input.value.trim())));
+      document.getElementById('esZoneCount').textContent=rows.length+' Rechercheziele · 0 kommunale Regelungen geprüft';
+      document.getElementById('esZoneList').innerHTML=rows.map(([name,url])=>`<article class="mini" style="margin-top:12px"><h3>${name}</h3><p>Ungeprüft · Einzelprüfung erforderlich. Zufahrt, ausländische Kennzeichen, Registrierung, Ausnahmen und Gültigkeitsdatum offen.</p><a href="${url}" target="_blank" rel="noopener noreferrer">Offizielles Rechercheportal ${name}</a></article>`).join('')||'<p>Keine Treffer in dieser unvollständigen Prüfliste.</p>';
+    };
+    input.addEventListener('input',update);update();
+  }
+}
+esFields.forEach(el=>el.addEventListener('input',()=>{document.getElementById('esProfileStatus').textContent=esProfileText();renderDetail();}));
+
 function setSelectOptions(select, options){
   const current=select.value;
   select.innerHTML=options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
@@ -1180,6 +1266,7 @@ function configureSubcontrols(){
     el=>el.style.display='none'
   );
 
+  if(c==='ES'){subcontrols.classList.remove('show');return;}
   if(!v) return;
 
   if(c==='HR'){
@@ -1323,6 +1410,7 @@ function selectedValue(control){
 
 function current(){
   if(!country.value||!vehicle.value) return null;
+  if(country.value==='ES') return currentES();
   const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:hrBase;
   if(!source[vehicle.value]) return null;
   const d={...source[vehicle.value]};
@@ -1448,10 +1536,11 @@ function current(){
 
 function render(){
   configureSubcontrols();
+  configureES();
   const d=current();
   checkStamp.textContent=country.value && countryCheckDates[country.value]
     ? `Stand: ${countryCheckDates[country.value]}`
-    : 'Stand: —';
+    : country.value==='ES' ? 'Ungeprüfter Entwurf · keine Freigabe' : 'Stand: —';
 
   if(!country.value||!d){
     vehicleTitle.textContent='!! Bitte zuerst Reiseland und Fahrzeugart auswählen !!';
@@ -1475,7 +1564,13 @@ function render(){
   speedResult.textContent=d.speed;
   boxResult.textContent=d.box;
 
-  if(country.value==='HR'){
+  if(country.value==='ES'){
+    overtakeResult.textContent='Einzelprüfung erforderlich';
+    overtakeNote.textContent='Fahrzeugklasse, Beschilderung und Streckenanordnung prüfen; keine pauschale Ausnahme für Wohnmobile.';
+    boxNote.textContent='Anbieter, Vertrag und Betreiberakzeptanz einzeln prüfen';
+    specialNote.textContent='Umweltzonen: durchsuchbare Prüfliste, keine Zufahrtsfreigabe';
+    abbrNote.textContent='ZBE · DGT · MMA · VIA-T';
+  }else if(country.value==='HR'){
     overtakeResult.textContent='🟢 Nicht automatisch betroffen';
     overtakeNote.textContent='Spezialverbot richtet sich an Güterkraftfahrzeuge >3,5 t; allgemeine Verbote bleiben gültig.';
     boxNote.textContent='HAC ENC ✅ · A2/AZM separat · Crolibertas ab 01.03.2027';
@@ -1533,7 +1628,9 @@ function renderDetail(){
     return;
   }
 
-  if(country.value==='AT'){
+  if(country.value==='ES'){
+    renderDetailES(d);
+  }else if(country.value==='AT'){
     renderDetailAT(d);
   }else if(country.value==='IT'){
     renderDetailIT(d);

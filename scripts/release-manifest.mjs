@@ -14,7 +14,8 @@ export function validateManifest(manifest, {previous = null, today = new Date().
   const require = (condition, message) => {if (!condition) errors.push(message);};
   if (!object(manifest)) return {errors:['Manifest muss ein Objekt sein.'], open, ready:false};
   const m = manifest;
-  require(m.schema_version === 1, 'Unbekannte schema_version.');
+  require([1,2].includes(m.schema_version), 'Unbekannte schema_version.');
+  const expected = m.schema_version === 2 ? [...COUNTRIES, 'ES'] : COUNTRIES;
   require(Number.isInteger(m.sequence) && m.sequence > 0, 'sequence muss positiv und ganzzahlig sein.');
   require(m.module === 'countrycheck', 'Falsches Modul.');
   require(['draft','approved','withdrawn'].includes(m.status), 'Ungültiger Manifeststatus.');
@@ -31,9 +32,9 @@ export function validateManifest(manifest, {previous = null, today = new Date().
     if (object(previous)) require(previous.sequence === m.sequence - 1, 'Manifestsequenz widerspricht dem Vorgänger.');
   }
   const rows = object(m.countries) ? m.countries : {};
-  require(Object.keys(rows).length === 4 && Object.keys(rows).every(code => COUNTRIES.includes(code)), 'Genau HR, AT, IT und FR sind erforderlich.');
+  require(Object.keys(rows).length === expected.length && Object.keys(rows).every(code => expected.includes(code)), 'Genau HR, AT, IT und FR sowie in Schema 2 ES sind erforderlich.');
   let withdrawn = false;
-  for (const code of COUNTRIES) {
+  for (const code of expected) {
     const c = rows[code];
     if (!object(c)) {errors.push(`${code}: Länderdatensatz fehlt.`);continue;}
     const prefix = `${code}: `;
@@ -89,7 +90,7 @@ export function validateManifest(manifest, {previous = null, today = new Date().
   }
   require(!withdrawn || m.status === 'withdrawn', 'Zurückgenommenes Land erfordert Manifeststatus withdrawn.');
   require(m.status !== 'withdrawn' || withdrawn, 'Manifeststatus withdrawn ohne zurückgenommenes Land.');
-  const allApproved = COUNTRIES.every(code => rows[code]?.approval?.status === 'approved');
+  const allApproved = expected.every(code => rows[code]?.approval?.status === 'approved');
   require(m.status !== 'approved' || allApproved, 'Manifestfreigabe ohne vollständige Länderfreigaben.');
   if (m.status !== 'approved') open.push('Manifest ist nicht freigegeben.');
   return {errors, open, ready:errors.length === 0 && open.length === 0 && allApproved};
