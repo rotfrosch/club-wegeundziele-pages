@@ -7,6 +7,8 @@
 <link rel="stylesheet" href="../assets/portal.css">
 </head>
 <body>
+<noscript><div role="alert" style="padding:18px;background:#fff3cd;color:#332600">Für Anmeldung und Ländercheck ist JavaScript erforderlich. Bitte aktiviere JavaScript und lade die Seite erneut.</div></noscript>
+<script src="../assets/readiness.js"></script>
 <main class="shell">
   <header class="top">
     <div class="brand">
@@ -35,33 +37,40 @@
 </main>
 
 <script type="module">
-import { supabase, getSession, hasPermission } from "../assets/auth.js";
+try {
+const { supabase, getSession, hasPermission } = await window.portalReady.loadAuth();
 
 const session = await getSession();
 if (!session || !(await hasPermission("admin:manage").catch(() => false))) {
   location.replace("../");
 } else {
-  const { data: s } = await supabase
+  const { data: s, error: settingsError } = await supabase
     .from("countrycheck_settings")
     .select("online_version,development_version,release_notes,published_at")
     .eq("app_key","countrycheck")
     .single();
 
-  document.querySelector("#versionBox").innerHTML =
-    '<div class="notice ok"><b>Online:</b> ' + s.online_version +
-    '<br><b>Entwicklung:</b> ' + s.development_version +
-    '<br><b>Stand:</b> ' + s.release_notes + '</div>';
-
-  const { data: c } = await supabase
+  if (settingsError || !s) throw new Error("Versionsabfrage fehlgeschlagen");
+  document.querySelector("#versionBox").textContent =
+    `Online: ${s.online_version || "nicht festgelegt"} · Entwicklung: ${s.development_version || "nicht festgelegt"} · Stand: ${s.release_notes || "keine Angabe"}`;
+  const { data: c, error: countriesError } = await supabase
     .from("countrycheck_countries")
     .select("iso_code,country_name,flag,publish_status,last_checked,content_revision")
     .order("country_name");
 
-  document.querySelector("#countries").innerHTML = (c || []).map(x =>
-    '<tr><td>' + x.flag + ' ' + x.country_name + '</td><td>' + x.publish_status +
-    '</td><td>' + (x.last_checked || '—') + '</td><td>' + x.content_revision + '</td></tr>'
-  ).join("");
+  if (countriesError) throw new Error("Länderstatus nicht verfügbar");
+  const tbody = document.querySelector('#countries');
+  for (const x of c || []) {
+    const row = tbody.insertRow();
+    for (const value of [String(x.flag || '') + ' ' + String(x.country_name || ''), x.publish_status, x.last_checked || '—', x.content_revision]) {
+      row.insertCell().textContent = value ?? 'keine Angabe';
+    }
+  }
+  if (!c?.length) document.querySelector('#versionBox').append(' · Keine Länderstatusdaten vorhanden.');
+
 }
+window.portalReady.done();
+} catch { window.portalReady.fail(); }
 </script>
 </body>
 </html>

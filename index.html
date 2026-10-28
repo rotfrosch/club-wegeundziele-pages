@@ -10,6 +10,8 @@
 <link rel="stylesheet" href="./assets/portal.css?v=20261028-10">
 </head>
 <body>
+<noscript><div role="alert" style="padding:18px;background:#fff3cd;color:#332600">Für Anmeldung und Ländercheck ist JavaScript erforderlich. Bitte aktiviere JavaScript und lade die Seite erneut.</div></noscript>
+<script src="./assets/readiness.js"></script>
 <main class="shell">
   <section id="loginView" class="panel login" hidden>
     <div class="brand">
@@ -58,7 +60,8 @@
 </main>
 
 <script type="module">
-import { supabase, hasPermission } from "./assets/auth.js";
+try {
+const { supabase, hasPermission } = await window.portalReady.loadAuth();
 
 const loginView = document.querySelector("#loginView");
 const portalView = document.querySelector("#portalView");
@@ -69,6 +72,7 @@ const moduleGrid = document.querySelector("#moduleGrid");
 const adminLink = document.querySelector("#adminLink");
 const userMail = document.querySelector("#userMail");
 
+window.addEventListener("unhandledrejection", () => window.portalReady.fail());
 const note = (el, text, ok=false) => {
   el.innerHTML = text ? '<div class="notice ' + (ok ? 'ok' : '') + '">' + text + '</div>' : '';
 };
@@ -128,7 +132,8 @@ async function showPortal(session){
 }
 
 async function boot(){
-  const { data } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
+  if (error) throw error;
   if (data.session) {
     const allowed = await hasPermission("campions-club:view").catch(() => false);
     const admin = await hasPermission("admin:manage").catch(() => false);
@@ -137,6 +142,9 @@ async function boot(){
     note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
   }
   loginView.hidden = false;
+  if (new URLSearchParams(location.search).get("denied") === "1") {
+    note(loginNotice, "Für diesen Bereich fehlt dir die erforderliche Freigabe. Bitte wende dich an die Club-Verwaltung.");
+  }
 }
 
 loginForm.addEventListener("submit", async e => {
@@ -158,7 +166,7 @@ loginForm.addEventListener("submit", async e => {
     note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
     return;
   }
-  showPortal(data.session);
+  await showPortal(data.session);
 });
 
 document.querySelector("#magicLink").addEventListener("click", async () => {
@@ -182,7 +190,9 @@ document.querySelector("#logoutBtn").addEventListener("click", async () => {
   location.reload();
 });
 
-boot();
+await boot();
+window.portalReady.done();
+} catch { window.portalReady.fail(); }
 </script>
 </body>
 </html>

@@ -758,7 +758,7 @@ select{
 
 <script>document.documentElement.classList.add('club-auth-pending');</script>
 <style>
-.club-auth-pending body{visibility:hidden}
+.club-auth-pending .wrap{visibility:hidden}
 .club-productbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 16px;background:#f4f0e5;border-bottom:1px solid rgba(85,96,72,.22);font:600 13px/1.2 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#394235}
 .club-productbar a,.club-productbar button{font:inherit;color:#394235;background:#fffdf7;border:1px solid #cfd5c2;border-radius:10px;padding:7px 10px;text-decoration:none;cursor:pointer}
 .club-productbar .right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -766,6 +766,8 @@ select{
 </style>
 </head>
 <body>
+<noscript><div role="alert" style="padding:18px;background:#fff3cd;color:#332600">Für Anmeldung und Ländercheck ist JavaScript erforderlich. Bitte aktiviere JavaScript und lade die Seite erneut.</div></noscript>
+<script src="../assets/readiness.js"></script>
 <div class="club-productbar"><div><b>Campions Club · Wege & Ziele</b> · Maut & Länderinfo</div>
 <div class="right"><span id="clubVersion">Version wird geladen …</span><a href="../">← Portal</a><button type="button" id="clubLogout">Abmelden</button></div></div>
 
@@ -2197,21 +2199,28 @@ render();
 </script>
 
 <script type="module">
-import {createClient} from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm";
-const supabase=createClient("https://tsbqqffrjxmekdqjwdso.supabase.co","sb_publishable_K9YSr-ih0e41R8QCAZArfg_2Z1dVl4H");
-const allowed=async key=>{const {data,error}=await supabase.rpc("current_user_has_permission",{requested_key:key});return !error&&data===true};
-const {data:sessionData}=await supabase.auth.getSession();
-if(!sessionData.session){location.replace("../")}
-else{
- const member=await allowed("campions-club:view"),admin=await allowed("admin:manage");
- if(!member&&!admin){location.replace("../?denied=1")}
- else{
-  const {data:s}=await supabase.from("countrycheck_settings").select("online_version,development_version").eq("app_key","countrycheck").maybeSingle();
-  document.querySelector("#clubVersion").textContent=s&&s.online_version!=="—"?`Online ${s.online_version}`:(s?`Entwicklung ${s.development_version}`:"Entwicklung");
-  document.documentElement.classList.remove("club-auth-pending");document.body.style.visibility="visible";
+try {
+ const {supabase,getSession,hasPermission}=await window.portalReady.loadAuth();
+ const session=await getSession();
+ if(!session){location.replace('../');}
+ else {
+  const member=await hasPermission('campions-club:view');
+  const admin=await hasPermission('admin:manage');
+  if(!member&&!admin){location.replace('../?denied=1');}
+  else {
+   const {data:s,error}=await supabase.from('countrycheck_settings').select('online_version,development_version').eq('app_key','countrycheck').maybeSingle();
+   document.querySelector('#clubVersion').textContent=error||!s
+    ? 'Versionsstatus nicht verfügbar · Länderfreigabe nicht bestätigt'
+    : `HTML-Stand: Entwicklung · Online-Version: ${s.online_version || 'nicht festgelegt'} · Länderfreigabe nicht bestätigt`;
+   document.documentElement.classList.remove('club-auth-pending');
+   window.portalReady.done();
+  }
  }
-}
-document.querySelector("#clubLogout")?.addEventListener("click",async()=>{await supabase.auth.signOut();location.replace("../")});
+ document.querySelector('#clubLogout')?.addEventListener('click',async()=>{
+  try {const {error}=await supabase.auth.signOut();if(error) throw error;location.replace('../');}
+  catch {window.portalReady.fail();}
+ });
+} catch {window.portalReady.fail();}
 </script>
 </body>
 </html>
