@@ -1,0 +1,525 @@
+{
+  "started_at": "2026-10-28T23:44:13.551Z",
+  "browser": "Chromium",
+  "production_auth_tested": false,
+  "email_sent": false,
+  "tests": [
+    {
+      "name": "01 Original SDK, anonymous startup",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 1719
+    },
+    {
+      "name": "02 Original logo replaces title",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 754
+    },
+    {
+      "name": "03 Layout, labels and touch targets",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 1099
+    },
+    {
+      "name": "04 Keyboard and missing email notice",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 927
+    },
+    {
+      "name": "05 Password rejection message",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 849
+    },
+    {
+      "name": "06 Member login hides administration",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 1002
+    },
+    {
+      "name": "07 Denied member signs out",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 799
+    },
+    {
+      "name": "08 Permission failure denies access",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 825
+    },
+    {
+      "name": "09 Existing member hides administration",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 759
+    },
+    {
+      "name": "10 Existing admin sees administration",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 744
+    },
+    {
+      "name": "11 Existing denied session signs out",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 711
+    },
+    {
+      "name": "12 Email link request contract",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 760
+    },
+    {
+      "name": "13 Email link rejection message",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 753
+    },
+    {
+      "name": "14 Missing auth module: message and reload",
+      "device": "Desktop",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 887
+    },
+    {
+      "name": "Invalid auth exports",
+      "device": "Desktop",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 749
+    },
+    {
+      "name": "Auth syntax error",
+      "device": "Desktop",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 731
+    },
+    {
+      "name": "Session API error",
+      "device": "Desktop",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 716
+    },
+    {
+      "name": "Rejected session promise",
+      "device": "Desktop",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 726
+    },
+    {
+      "name": "Auth module timeout",
+      "device": "Desktop",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 12565
+    },
+    {
+      "name": "Denied admin RPC",
+      "device": "Desktop",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 919
+    },
+    {
+      "name": "Failed admin RPC",
+      "device": "Desktop",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 890
+    },
+    {
+      "name": "Non-boolean RPC cannot grant access",
+      "device": "Desktop",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 906
+    },
+    {
+      "name": "Authorized admin RPC",
+      "device": "Desktop",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 675
+    },
+    {
+      "name": "01 Original SDK, anonymous startup",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 1470
+    },
+    {
+      "name": "02 Original logo replaces title",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 734
+    },
+    {
+      "name": "03 Layout, labels and touch targets",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 989
+    },
+    {
+      "name": "04 Keyboard and missing email notice",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 835
+    },
+    {
+      "name": "05 Password rejection message",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 774
+    },
+    {
+      "name": "06 Member login hides administration",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 842
+    },
+    {
+      "name": "07 Denied member signs out",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 865
+    },
+    {
+      "name": "08 Permission failure denies access",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 763
+    },
+    {
+      "name": "09 Existing member hides administration",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 740
+    },
+    {
+      "name": "10 Existing admin sees administration",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 745
+    },
+    {
+      "name": "11 Existing denied session signs out",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 721
+    },
+    {
+      "name": "12 Email link request contract",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 798
+    },
+    {
+      "name": "13 Email link rejection message",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 774
+    },
+    {
+      "name": "14 Missing auth module: message and reload",
+      "device": "iPad (gen 7)",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 884
+    },
+    {
+      "name": "Invalid auth exports",
+      "device": "iPad (gen 7)",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 717
+    },
+    {
+      "name": "Auth syntax error",
+      "device": "iPad (gen 7)",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 721
+    },
+    {
+      "name": "Session API error",
+      "device": "iPad (gen 7)",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 703
+    },
+    {
+      "name": "Rejected session promise",
+      "device": "iPad (gen 7)",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 694
+    },
+    {
+      "name": "Auth module timeout",
+      "device": "iPad (gen 7)",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 12572
+    },
+    {
+      "name": "Denied admin RPC",
+      "device": "iPad (gen 7)",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 898
+    },
+    {
+      "name": "Failed admin RPC",
+      "device": "iPad (gen 7)",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 890
+    },
+    {
+      "name": "Non-boolean RPC cannot grant access",
+      "device": "iPad (gen 7)",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 888
+    },
+    {
+      "name": "Authorized admin RPC",
+      "device": "iPad (gen 7)",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 730
+    },
+    {
+      "name": "01 Original SDK, anonymous startup",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 1863
+    },
+    {
+      "name": "02 Original logo replaces title",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 754
+    },
+    {
+      "name": "03 Layout, labels and touch targets",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 959
+    },
+    {
+      "name": "04 Keyboard and missing email notice",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 847
+    },
+    {
+      "name": "05 Password rejection message",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 811
+    },
+    {
+      "name": "06 Member login hides administration",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 824
+    },
+    {
+      "name": "07 Denied member signs out",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 764
+    },
+    {
+      "name": "08 Permission failure denies access",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 781
+    },
+    {
+      "name": "09 Existing member hides administration",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 811
+    },
+    {
+      "name": "10 Existing admin sees administration",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 737
+    },
+    {
+      "name": "11 Existing denied session signs out",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 706
+    },
+    {
+      "name": "12 Email link request contract",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 783
+    },
+    {
+      "name": "13 Email link rejection message",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 810
+    },
+    {
+      "name": "14 Missing auth module: message and reload",
+      "device": "iPhone 13",
+      "kind": "original-14",
+      "status": "passed",
+      "duration_ms": 934
+    },
+    {
+      "name": "Invalid auth exports",
+      "device": "iPhone 13",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 778
+    },
+    {
+      "name": "Auth syntax error",
+      "device": "iPhone 13",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 750
+    },
+    {
+      "name": "Session API error",
+      "device": "iPhone 13",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 747
+    },
+    {
+      "name": "Rejected session promise",
+      "device": "iPhone 13",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 740
+    },
+    {
+      "name": "Auth module timeout",
+      "device": "iPhone 13",
+      "kind": "additional-regression",
+      "status": "passed",
+      "duration_ms": 12594
+    },
+    {
+      "name": "Denied admin RPC",
+      "device": "iPhone 13",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 908
+    },
+    {
+      "name": "Failed admin RPC",
+      "device": "iPhone 13",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 907
+    },
+    {
+      "name": "Non-boolean RPC cannot grant access",
+      "device": "iPhone 13",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 912
+    },
+    {
+      "name": "Authorized admin RPC",
+      "device": "iPhone 13",
+      "kind": "authorization-boundary",
+      "status": "passed",
+      "duration_ms": 717
+    }
+  ],
+  "browser_version": "154.0.8037.57",
+  "finished_at": "2026-10-28T23:45:47.603Z",
+  "passed": 69,
+  "failed": 0,
+  "tested_files": {
+    "index.html": "4ad0a94c2a04016839f2b92aba00ca3c7e4bbe42aecc145a03b6665777ce17d5",
+    "assets/portal.css": "2cbd82df3fa60aea21e3064570059977cce04a3b9c18190349cee9454a7525e5",
+    "assets/auth.js": "15ad1f44cba5f84ae417ed7f4a39cf55f372e3abf7d5db30ac41304ca5581ca5",
+    "admin/index.html": "c830dd227285e5390547989e6c569fa1af3edc83ff8cc06da291d9e4af1ddb2f",
+    "tests/login-regression.cjs": "240b73993d2483290f94c82115a9b3422e1321ad61bf5a869165dabc65a43ed0"
+  },
+  "source_commit": "cabe9b37352a78a5ea005f71c705d991b1b092d7",
+  "protected_files": {
+    "assets/auth.js": {
+      "unchanged": true,
+      "sha256": "15ad1f44cba5f84ae417ed7f4a39cf55f372e3abf7d5db30ac41304ca5581ca5"
+    },
+    "assets/config.js": {
+      "unchanged": true,
+      "sha256": "a83cb3f2031438cf5ba3ea8ad0b88b65f0e277f2774d8682ff27ed896d236596"
+    },
+    "admin/index.html": {
+      "unchanged": true,
+      "sha256": "c830dd227285e5390547989e6c569fa1af3edc83ff8cc06da291d9e4af1ddb2f"
+    },
+    "maut-laenderinfo/index.html": {
+      "unchanged": true,
+      "sha256": "6cb307dad631b3374db74691c2a0dc22168f2933af69d1f9666e57708848883f"
+    },
+    "assets/campions-club-logo.png": {
+      "unchanged": true,
+      "sha256": "83521d89076bf778e3b7f0db248206137f970fc58e400910bd0de8863e99ffc4"
+    }
+  }
+}

@@ -7,10 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./assets/portal.css?v=20261029-login1">
+<link rel="stylesheet" href="./assets/portal.css?v=20261029-login2">
 </head>
 <body>
 <main class="shell">
+  <section id="loginRecovery" class="panel login" aria-live="polite">
+    <p id="loginRecoveryText">Die Anmeldung wird geladen …</p>
+    <button class="btn-soft" type="button" onclick="window.location.reload()">Seite neu laden</button>
+    <noscript><p>Bitte JavaScript aktivieren, um dich anzumelden.</p></noscript>
+  </section>
   <section id="loginView" class="panel login" hidden>
     <div class="login-brand"><img class="login-logo" src="./assets/campions-club-logo.png" alt="Campions Club"></div>
     <div id="loginNotice"></div>
@@ -55,7 +60,21 @@
 </main>
 
 <script type="module">
-import { supabase, hasPermission } from "./assets/auth.js";
+const recovery = document.querySelector("#loginRecovery");
+try {
+  let authTimer;
+  const { supabase, hasPermission } = await Promise.race([
+    import("./assets/auth.js"),
+    new Promise((_, reject) => {
+      authTimer = setTimeout(() => reject(new Error("Auth initialization timeout")), 12000);
+    })
+  ]).finally(() => clearTimeout(authTimer));
+  if (!supabase || typeof supabase.from !== "function" ||
+      typeof hasPermission !== "function" ||
+      !["getSession", "signInWithPassword", "signInWithOtp", "signOut"]
+        .every(method => typeof supabase.auth?.[method] === "function")) {
+    throw new Error("Invalid auth module");
+  }
 
 const loginView = document.querySelector("#loginView");
 const portalView = document.querySelector("#portalView");
@@ -125,7 +144,8 @@ async function showPortal(session){
 }
 
 async function boot(){
-  const { data } = await supabase.auth.getSession();
+  const { data, error } = await supabase.auth.getSession();
+  if (error || !data) throw new Error("Session initialization failed");
   if (data.session) {
     const allowed = await hasPermission("campions-club:view").catch(() => false);
     const admin = await hasPermission("admin:manage").catch(() => false);
@@ -179,7 +199,18 @@ document.querySelector("#logoutBtn").addEventListener("click", async () => {
   location.reload();
 });
 
-boot();
+  await boot();
+  recovery.hidden = true;
+} catch {
+  // Fail closed: a loader error must never reveal the member area.
+  document.querySelector("#loginView").hidden = true;
+  document.querySelector("#portalView").hidden = true;
+  document.querySelector("#adminLink").hidden = true;
+  recovery.hidden = false;
+  recovery.setAttribute("role", "alert");
+  document.querySelector("#loginRecoveryText").textContent =
+    "Die Anmeldung konnte nicht geladen werden. Bitte prüfe deine Internetverbindung und lade die Seite erneut.";
+}
 </script>
 </body>
 </html>
