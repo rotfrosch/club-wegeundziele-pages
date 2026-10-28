@@ -1,0 +1,1 @@
+{"name":"campions-portal-regression","private":true,"scripts":{"test":"node regression.cjs"},"devDependencies":{"playwright":"1.58.2"}}

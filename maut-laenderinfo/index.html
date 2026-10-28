@@ -2215,6 +2215,12 @@ try {
   if(!member&&!admin){location.replace('../?denied=1');}
   else {
    const {data:s,error}=await supabase.from('countrycheck_settings').select('online_version,development_version').eq('app_key','countrycheck').maybeSingle();
+   const {countryPublication}=await import('../assets/publication.js');
+   const {data:countries,error:countriesError}=await supabase.from('countrycheck_countries').select('iso_code,publish_status,content_revision');
+   const status=document.createElement('p');
+   status.style.cssText='padding:12px;background:#fff3cd;color:#332600';
+   status.textContent=countryPublication(null,countries,!!countriesError);
+   document.querySelector('.wrap').prepend(status);
    document.querySelector('#clubVersion').textContent=error||!s
     ? 'Versionsstatus nicht verfügbar · Länderfreigabe nicht bestätigt'
     : `HTML-Stand: Entwicklung · Online-Version: ${s.online_version || 'nicht festgelegt'} · Länderfreigabe nicht bestätigt`;
