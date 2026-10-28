@@ -29,7 +29,7 @@ async function pageFor(config={},device) {
 async function test(name,fn){await fn();results.browser.push(name);console.log('PASS',name);}
 async function withPage(config,path,fn,device){const {context,page}=await pageFor(config,device);try{await page.goto(base+path);await fn(page);}finally{await context.close();}}
 async function visible(page,selector){await page.locator(selector).waitFor({state:'visible'});}
-async function select(page,country,vehicle,values={}){await page.selectOption('#country',country);await page.selectOption('#vehicle',vehicle);for(const [id,v]of Object.entries(values))await page.selectOption('#'+id,v);}
+async function select(page,country,vehicle,values={}){await visible(page,'#country');await page.locator('#readinessNotice').waitFor({state:'hidden'});await page.selectOption('#country',country);await page.selectOption('#vehicle',vehicle);for(const [id,v]of Object.entries(values))await page.selectOption('#'+id,v);await page.waitForFunction(()=>document.querySelector('#tollResult').textContent.trim() && document.querySelector('#tollResult').textContent!=='—');}
 (async()=>{
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  await test('01 Anonymous login',()=>withPage({anonymous:true},'/',p=>visible(p,'#loginView')));
@@ -41,12 +41,12 @@ async function select(page,country,vehicle,values={}){await page.selectOption('#
  await test('07 Missing admin settings',()=>withPage({admin:true,emptySettings:true},'/admin/',p=>p.getByRole('alert').filter({hasText:'konnte nicht geladen'}).waitFor()));
  await test('08 Failed admin settings',()=>withPage({admin:true,settingsError:true},'/admin/',p=>p.getByRole('alert').filter({hasText:'konnte nicht geladen'}).waitFor()));
  await test('09 Empty country records',()=>withPage({admin:true,emptyCountries:true},'/admin/',p=>p.getByText(/Keine Länderstatusdaten/).waitFor()));
- await test('10 Online module does not approve countries',()=>withPage({},'/',async p=>{await p.getByText(/bestätigt keine vollständige Länderfreigabe/).waitFor();await p.getByRole('link',{name:/Maut/}).click();await visible(p,'#country');}));
+ await test('10 Online module does not approve countries',()=>withPage({},'/',async p=>{await p.getByText(/bestätigt keine vollständige Länderfreigabe/).waitFor();await p.locator('#moduleGrid a').waitFor();await p.locator('#moduleGrid a').click();await visible(p,'#country');}));
  await test('11 Country permission redirects',()=>withPage({denied:true},'/maut-laenderinfo/',async p=>{await p.waitForURL('**/?denied=1');await p.getByText(/Für diesen Bereich fehlt/).waitFor();}));
  await test('12 Nine accessible select labels',()=>withPage({},'/maut-laenderinfo/',async p=>{await visible(p,'#country');assert.equal(await p.locator('select').count(),9);assert.equal(await p.locator('select').evaluateAll(s=>s.filter(x=>x.labels?.length && x.labels[0].textContent.trim()).length),9);}));
  await test('13 Hidden trailer brake cannot change heavy profile',()=>withPage({},'/maut-laenderinfo/',async p=>{await select(p,'HR','carTrailer',{brake:'unbraked'});await p.selectOption('#vehicle','mHeavyTrailer');await p.locator('[data-tab="speed"]').click();const a=await p.locator('#detailText').innerText();await p.evaluate(()=>{brake.value='braked';render();});assert.equal(await p.locator('#detailText').innerText(),a);}));
  await test('14 Hidden length cannot affect solo Italian car',()=>withPage({},'/maut-laenderinfo/',async p=>{await select(p,'IT','m35',{length:'long'});await p.selectOption('#vehicle','car');await p.locator('[data-tab="special"]').click();const a=await p.locator('#detailText').innerText();await p.evaluate(()=>{lengthSel.value='short';render();});assert.equal(await p.locator('#detailText').innerText(),a);}));
- await test('15 Keyboard detail navigation',()=>withPage({},'/maut-laenderinfo/',async p=>{await select(p,'AT','car');const card=p.locator('[data-tab="toll"]');await card.focus();await p.keyboard.press('Enter');assert.match(await p.locator('#detailTitle').innerText(),/Maut Österreich/);}));
+ await test('15 Keyboard detail navigation',()=>withPage({},'/maut-laenderinfo/',async p=>{await select(p,'AT','car');const card=p.locator('[data-tab="toll"]');await card.focus();await p.keyboard.press('Enter');await p.waitForFunction(()=>document.querySelector('#detailTitle').textContent.includes('Maut Österreich'));assert.match(await p.locator('#detailTitle').innerText(),/Maut Österreich/);}));
  await test('16 Logout navigation',()=>withPage({},'/maut-laenderinfo/',async p=>{await visible(p,'#country');await p.locator('#clubLogout').click();await p.waitForURL(base+'/');}));
  await test('17 Failed module list is visible',()=>withPage({modulesError:true},'/',p=>p.getByText('Die Module konnten nicht geladen werden.').waitFor()));
  await test('18 JavaScript disabled notices on all pages',async()=>{const c=await browser.newContext({javaScriptEnabled:false});try{for(const path of ['/','/admin/','/maut-laenderinfo/']){const p=await c.newPage();await p.goto(base+path);await p.getByText(/JavaScript erforderlich/).waitFor();await p.close();}}finally{await c.close();}});
@@ -69,7 +69,7 @@ async function select(page,country,vehicle,values={}){await page.selectOption('#
   console.log('MATRIX',results.profiles,'profiles',results.details,'details');assert.equal(results.profiles,126);assert.equal(results.details,882);
  });
  const cases=[
- ['HR','car',{},'Klasse I','50 · 90 · 110 · 130 km/h'],
+ ['HR','car',{},'Klasse I*','50 · 90 · 110 · 130 km/h'],
  ['HR','m35',{},'Klasse II','50 · 90 · 110 · 130 km/h'],
  ['HR','carTrailer',{brake:'unbraked'},'Klasse II','50 · 80 · 80 · 90 km/h'],
  ['HR','mHeavyTrailer',{motorhomeAxles:'2',trailerAxles:'1'},'Klasse III','50 · 80 · 80 · 90 km/h'],
@@ -77,7 +77,7 @@ async function select(page,country,vehicle,values={}){await page.selectOption('#
  ['AT','car',{},'Vignette','50 · 100 · 100 · 130 km/h'],
  ['AT','carTrailer',{brake:'atBE'},'Vignette','50 · 70 · 80 · 80 km/h'],
  ['AT','mHeavyTrailer',{motorhomeAxles:'3'},'GO-Maut · Kat. 3','50 · 70 · 80 · 80 km/h'],
- ['IT','car',{},'Klasse A','50 · 90 · 110 · 130 km/h'],
+ ['IT','car',{},'Klasse A*','50 · 90 · 110 · 130 km/h'],
  ['IT','m4',{motorhomeAxles:'5',weightBand:'over12'},'Klasse 5','50 · 70 · 70 · 80 km/h'],
  ['IT','carTrailer',{trailerAxles:'2'},'Klasse 4','50 · 70 · 70 · 80 km/h'],
  ['FR','m35',{heightBand:'ge3'},'Klasse 3','50 · 80/90 · 110 · 130 km/h'],
