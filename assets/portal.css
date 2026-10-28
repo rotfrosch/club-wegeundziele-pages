@@ -13,3 +13,12 @@ table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px s
 
 /* Preserve programmatic visibility for permission and login controls. */
 [hidden]{display:none!important}
+
+/* Login design: original logo replaces the redundant heading. */
+.login{width:min(650px,calc(100% - 32px));margin:clamp(24px,6vh,72px) auto;padding:clamp(24px,4vw,48px);border-radius:24px}
+.login-brand{display:flex;justify-content:center;align-items:center;margin:8px 0 42px}
+.login-logo{display:block;width:min(100%,540px);height:auto;object-fit:contain}
+.login label{font-size:1.1rem;margin:20px 0 9px}
+.login input{min-height:56px;border-radius:11px}
+.login .btn-primary,.login .btn-soft{border-radius:12px;min-height:52px}
+@media(max-width:640px){.login{padding:24px 20px}.login-brand{margin-bottom:24px}.login-logo{width:100%}}
