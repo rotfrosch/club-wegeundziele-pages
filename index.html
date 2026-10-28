@@ -4,7 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Campions Club</title>
-<link rel="stylesheet" href="./assets/portal.css?v=20261028-2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=Source+Sans+3:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./assets/portal.css?v=20261028-3">
 </head>
 <body>
 <main class="shell">
@@ -28,7 +31,7 @@
 
   <section id="portalView" class="portal" hidden>
     <header class="memberbar">
-      <a class="member-home" href="./" aria-label="Campions Club Startseite">Campions Club</a>
+      <span aria-hidden="true"></span>
       <div class="userbox">
         <span id="userMail" class="small"></span>
         <a id="adminLink" class="btn btn-soft" href="./admin/" hidden>Verwaltung</a>
@@ -70,13 +73,18 @@ const userMail = document.querySelector("#userMail");
 const note = (el, text, ok=false) => {
   el.innerHTML = text ? '<div class="notice ' + (ok ? 'ok' : '') + '">' + text + '</div>' : '';
 };
-const statusLabel = s => s === "live" ? "Online" : s === "hidden" ? "Ausgeblendet" : "In Vorbereitung";
-
 const cardArtwork = slug => {
   if (slug === "camping-car-park") return '<div class="module-art parks"><img src="./assets/camping-car-park-logo.png" alt="Camping-Car Park"></div>';
-  if (slug === "fuel-prices") return '<div class="module-art"><div class="wordmark fuel"><span class="wordmark-icon">⛽</span><strong>BENZINPREISE<small>IN EUROPA</small></strong></div></div>';
-  return '<div class="module-art"><div class="wordmark toll"><span class="toll-icon">▣</span><strong>MAUT &amp;<small>LÄNDERINFO</small></strong></div></div>';
+  const symbol = slug === "fuel-prices"
+    ? '<svg viewBox="0 0 24 24" fill="none"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M3 21h14M7.5 6h5v4h-5V6ZM15 7h2l2 2.2V17a2 2 0 0 0 4 0v-6.5l-2-2" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    : '<svg viewBox="0 0 92 82" fill="none"><path d="M14 70h64M21 70V33h29v37M18 33h35l-5-12H23l-5 12Z" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 43h12v11H30V43ZM50 42h30M78 42l8 8M80 42l6-7" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 21v-7h18v7" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  const fuel = slug === "fuel-prices";
+  return '<div class="module-art"><div class="wordmark ' + (fuel ? 'fuel' : 'toll') + '"><span class="wordmark-icon">' + symbol + '</span><span><strong>' + (fuel ? 'BENZINPREISE' : 'MAUT &amp;') + '</strong><b>' + (fuel ? 'IN EUROPA' : 'LÄNDERINFO') + '</b></span></div></div>';
 };
+
+const arrowIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const fuelIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M3 21h14M7.5 6h5v4h-5V6ZM15 7h2l2 2.2V17a2 2 0 0 0 4 0v-6.5l-2-2" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const roadIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 21 10 3M15.5 21 14 3M12 5.5v3M12 12v3M12 18.5V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 
 const moduleSubtitle = slug => slug === "camping-car-park"
   ? "Stellplatzdaten und Änderungen"
@@ -102,25 +110,16 @@ async function showPortal(session){
     return;
   }
 
-  const { data: settings } = await supabase
-    .from("countrycheck_settings")
-    .select("online_version,development_version")
-    .eq("app_key","countrycheck")
-    .maybeSingle();
-
   moduleGrid.innerHTML = (modules || []).map(m => {
     const live = m.status === "live";
     const preview = isAdmin && m.slug === "countrycheck";
     const clickable = live || preview;
-    const version = m.slug === "countrycheck" && settings
-      ? (live ? "Version " + settings.online_version : "Entwicklung " + settings.development_version)
-      : "";
+    const cardIcon = m.slug === "camping-car-park" ? '<span class="pin-icon">⌖</span>' : (m.slug === "fuel-prices" ? fuelIcon : roadIcon);
 
     const card =
       '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
       cardArtwork(m.slug) +
-      '<div class="module-copy"><span class="round-arrow">→</span><div><h2>' + m.name + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">→</span></div>' +
-      '<div class="meta"><span class="status ' + m.status + '">' + statusLabel(m.status) + '</span><span class="small">' + version + '</span></div>' +
+      '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + m.name + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
       '</article>';
 
     return clickable ? '<a class="module-link" href=".' + m.path + '/">' + card + '</a>' : card;
