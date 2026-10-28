@@ -1,0 +1,1560 @@
+{
+  "browser": [
+    "01 Anonymous login",
+    "02 CDN failure on portal",
+    "03 CDN failure on admin",
+    "04 CDN failure on countrycheck",
+    "05 Session API failure",
+    "06 denied=1 explanation",
+    "07 Missing admin settings",
+    "08 Failed admin settings",
+    "09 Empty country records",
+    "10 Online module does not approve countries",
+    "11 Country permission redirects",
+    "12 Nine accessible select labels",
+    "13 Hidden trailer brake cannot change heavy profile",
+    "14 Hidden length cannot affect solo Italian car",
+    "15 Keyboard detail navigation",
+    "16 Logout navigation",
+    "17 Failed module list is visible",
+    "18 JavaScript disabled notices on all pages"
+  ],
+  "profiles": 126,
+  "details": 882,
+  "expectedCases": 14,
+  "status": 4,
+  "emulation": [
+    "Desktop",
+    "iPad (gen 7)",
+    "iPhone 13"
+  ],
+  "profileMatrix": [
+    {
+      "country": "HR",
+      "vehicle": "car",
+      "values": {},
+      "toll": "Klasse I*",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "braked",
+        "length": "short"
+      },
+      "toll": "Klasse II",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "braked",
+        "length": "long"
+      },
+      "toll": "Klasse II",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "unbraked",
+        "length": "short"
+      },
+      "toll": "Klasse II",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "unbraked",
+        "length": "long"
+      },
+      "toll": "Klasse II",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m35",
+      "values": {},
+      "toll": "Klasse II",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m2",
+      "values": {},
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m3",
+      "values": {},
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m4",
+      "values": {},
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "braked",
+        "length": "short"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "braked",
+        "length": "long"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "unbraked",
+        "length": "short"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "unbraked",
+        "length": "long"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse III",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "HR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse IV",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "car",
+      "values": {},
+      "toll": "Vignette",
+      "speed": "50 · 100 · 100 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "atLight"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 100 · 100 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "atCombo35"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 80 · 100 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "carTrailer",
+      "values": {
+        "brake": "atBE"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m35",
+      "values": {},
+      "toll": "Vignette",
+      "speed": "50 · 100 · 100 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m2",
+      "values": {},
+      "toll": "GO-Maut · Kat. 2",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m3",
+      "values": {},
+      "toll": "GO-Maut · Kat. 3",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m4",
+      "values": {},
+      "toll": "GO-Maut · Kat. 4+",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "atLight"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 100 · 100 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "atCombo35"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 80 · 100 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "brake": "atBE"
+      },
+      "toll": "Vignette",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2"
+      },
+      "toll": "GO-Maut · Kat. 2",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3"
+      },
+      "toll": "GO-Maut · Kat. 3",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "AT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4"
+      },
+      "toll": "GO-Maut · Kat. 4+",
+      "speed": "50 · 70 · 80 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "car",
+      "values": {},
+      "toll": "Klasse A*",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "carTrailer",
+      "values": {
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "carTrailer",
+      "values": {
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "carTrailer",
+      "values": {
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "carTrailer",
+      "values": {
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35",
+      "values": {
+        "length": "short"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35",
+      "values": {
+        "length": "long"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "upto12",
+        "length": "short"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "upto12",
+        "length": "long"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "over12",
+        "length": "short"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "over12",
+        "length": "long"
+      },
+      "toll": "Klasse B*",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "upto12",
+        "length": "short"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "upto12",
+        "length": "long"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "over12",
+        "length": "short"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "over12",
+        "length": "long"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "4",
+        "weightBand": "upto12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "4",
+        "weightBand": "upto12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "4",
+        "weightBand": "over12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "4",
+        "weightBand": "over12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "5",
+        "weightBand": "upto12",
+        "length": "short"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "5",
+        "weightBand": "upto12",
+        "length": "long"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 80 · 80 · 100 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "5",
+        "weightBand": "over12",
+        "length": "short"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m4",
+      "values": {
+        "motorhomeAxles": "5",
+        "weightBand": "over12",
+        "length": "long"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "m35Trailer",
+      "values": {
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "2",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "3",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "1",
+        "length": "short"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "1",
+        "length": "long"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "2",
+        "length": "short"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "IT",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "motorhomeAxles": "4",
+        "trailerAxles": "2",
+        "length": "long"
+      },
+      "toll": "Klasse 5",
+      "speed": "50 · 70 · 70 · 80 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "car",
+      "values": {},
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "carTrailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35",
+      "values": {
+        "heightBand": "le2"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35",
+      "values": {
+        "heightBand": "between2and3"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35",
+      "values": {
+        "heightBand": "ge3"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "upto12"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 80 · 100 · 110 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m2",
+      "values": {
+        "weightBand": "over12"
+      },
+      "toll": "Klasse 3",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "upto12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 100 · 110 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m3",
+      "values": {
+        "weightBand": "over12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m4",
+      "values": {
+        "weightBand": "upto12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 100 · 110 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m4",
+      "values": {
+        "weightBand": "over12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "le2",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 1",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "between2and3",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 2",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "le35",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "le35",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80/90 · 110 · 130 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt35le12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt35le12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt12",
+        "length": "short"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "m35Trailer",
+      "values": {
+        "heightBand": "ge3",
+        "comboWeight": "gt12",
+        "length": "long"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "comboWeight": "gt35le12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 80 · 90 · 90 km/h",
+      "details": 7
+    },
+    {
+      "country": "FR",
+      "vehicle": "mHeavyTrailer",
+      "values": {
+        "comboWeight": "gt12"
+      },
+      "toll": "Klasse 4",
+      "speed": "50 · 60–80 · 80 · 90 km/h",
+      "details": 7
+    }
+  ],
+  "expectedFixtures": [
+    [
+      "HR",
+      "car",
+      {},
+      "Klasse I*",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "HR",
+      "m35",
+      {},
+      "Klasse II",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "HR",
+      "carTrailer",
+      {
+        "brake": "unbraked"
+      },
+      "Klasse II",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "HR",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1"
+      },
+      "Klasse III",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "HR",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1"
+      },
+      "Klasse IV",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "AT",
+      "car",
+      {},
+      "Vignette",
+      "50 · 100 · 100 · 130 km/h"
+    ],
+    [
+      "AT",
+      "carTrailer",
+      {
+        "brake": "atBE"
+      },
+      "Vignette",
+      "50 · 70 · 80 · 80 km/h"
+    ],
+    [
+      "AT",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "3"
+      },
+      "GO-Maut · Kat. 3",
+      "50 · 70 · 80 · 80 km/h"
+    ],
+    [
+      "IT",
+      "car",
+      {},
+      "Klasse A*",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "IT",
+      "m4",
+      {
+        "motorhomeAxles": "5",
+        "weightBand": "over12"
+      },
+      "Klasse 5",
+      "50 · 70 · 70 · 80 km/h"
+    ],
+    [
+      "IT",
+      "carTrailer",
+      {
+        "trailerAxles": "2"
+      },
+      "Klasse 4",
+      "50 · 70 · 70 · 80 km/h"
+    ],
+    [
+      "FR",
+      "m35",
+      {
+        "heightBand": "ge3"
+      },
+      "Klasse 3",
+      "50 · 80/90 · 110 · 130 km/h"
+    ],
+    [
+      "FR",
+      "carTrailer",
+      {
+        "heightBand": "ge3",
+        "comboWeight": "gt12"
+      },
+      "Klasse 4",
+      "50 · 60–80 · 80 · 90 km/h"
+    ],
+    [
+      "FR",
+      "m2",
+      {
+        "weightBand": "over12"
+      },
+      "Klasse 3",
+      "50 · 80 · 80 · 90 km/h"
+    ]
+  ],
+  "spain": {
+    "profiles": 8,
+    "details": 56,
+    "boundaries": 11,
+    "search": 4
+  },
+  "device": "iPhone 13"
+}

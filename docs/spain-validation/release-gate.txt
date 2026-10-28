@@ -1,0 +1,19 @@
+Manifest 2: strukturell gültig; Freigabe OFFEN.
+HTML: sha256:6dc21415496daceea6abdbabff3e4e242d7efa831cba1d90752b18b06ca9aa73 · Git: ab8a6ecf9635802c7a394b7721bd5069c669e302
+- HR: Länderrevision offen.
+- HR: Quellenprüfung offen.
+- HR: Fachliche Freigabe offen.
+- AT: Länderrevision offen.
+- AT: Quellenprüfung offen.
+- AT: Fachliche Freigabe offen.
+- IT: Länderrevision offen.
+- IT: Quellenprüfung offen.
+- IT: Fachliche Freigabe offen.
+- FR: Länderrevision offen.
+- FR: Quellenprüfung offen.
+- FR: Fachliche Freigabe offen.
+- ES: Quellenprüfung offen.
+- ES: Fachliche Freigabe offen.
+- Manifest ist nicht freigegeben.
+
+Exit status: 2

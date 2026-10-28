@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "module": "countrycheck",
+  "sequence": 2,
+  "previous": {
+    "path": "releases/countrycheck/manifest-0001.json",
+    "sha256": "e74174b7ce50fe01ed327f2eda6a95a36c65797be52b30f9b427251dbf69b96d"
+  },
+  "status": "draft",
+  "artifact": {
+    "git_commit": "ab8a6ecf9635802c7a394b7721bd5069c669e302",
+    "path": "maut-laenderinfo/index.html",
+    "sha256": "6dc21415496daceea6abdbabff3e4e242d7efa831cba1d90752b18b06ca9aa73",
+    "html_version": "sha256:6dc21415496daceea6abdbabff3e4e242d7efa831cba1d90752b18b06ca9aa73"
+  },
+  "countries": {
+    "HR": {
+      "content_revision": null,
+      "source_review": {
+        "checked_on": null,
+        "reviewed_by": null,
+        "sources": []
+      },
+      "approval": {
+        "status": "open",
+        "responsible": null,
+        "decided_on": null,
+        "evidence": null,
+        "reason": null
+      }
+    },
+    "AT": {
+      "content_revision": null,
+      "source_review": {
+        "checked_on": null,
+        "reviewed_by": null,
+        "sources": []
+      },
+      "approval": {
+        "status": "open",
+        "responsible": null,
+        "decided_on": null,
+        "evidence": null,
+        "reason": null
+      }
+    },
+    "IT": {
+      "content_revision": null,
+      "source_review": {
+        "checked_on": null,
+        "reviewed_by": null,
+        "sources": []
+      },
+      "approval": {
+        "status": "open",
+        "responsible": null,
+        "decided_on": null,
+        "evidence": null,
+        "reason": null
+      }
+    },
+    "FR": {
+      "content_revision": null,
+      "source_review": {
+        "checked_on": null,
+        "reviewed_by": null,
+        "sources": []
+      },
+      "approval": {
+        "status": "open",
+        "responsible": null,
+        "decided_on": null,
+        "evidence": null,
+        "reason": null
+      }
+    },
+    "ES": {
+      "content_revision": 1,
+      "source_review": {
+        "checked_on": null,
+        "reviewed_by": null,
+        "sources": []
+      },
+      "approval": {
+        "status": "open",
+        "responsible": null,
+        "decided_on": null,
+        "evidence": null,
+        "reason": null
+      }
+    }
+  }
+}

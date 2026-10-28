@@ -1,0 +1,52 @@
+{
+  "task_date": "2026-10-28",
+  "branch": "feat/spain-country-integration",
+  "base_commit": "55a83177b003d1013f1912fcad0461e166975793",
+  "html_commit": "ab8a6ecf9635802c7a394b7721bd5069c669e302",
+  "manifest_tests": {
+    "passed": 31,
+    "failed": 0,
+    "skipped": 0
+  },
+  "browser_runs": [
+    {
+      "device": "Desktop",
+      "result_file": "results.json",
+      "exit_status": 0
+    },
+    {
+      "device": "iPad (gen 7)",
+      "result_file": "results-iPad__gen_7_.json",
+      "exit_status": 0
+    },
+    {
+      "device": "iPhone 13",
+      "result_file": "results-iPhone_13.json",
+      "exit_status": 0
+    }
+  ],
+  "release_gate": {
+    "exit_status": 2,
+    "approved": false
+  },
+  "sources": {
+    "verified": false,
+    "boe_and_dgt_proxy_status": 403
+  },
+  "published": false,
+  "supabase_writes": false,
+  "limitations": [
+    "Chromium device emulation; no real Safari hardware testing",
+    "Controlled local authentication responses, not production authentication",
+    "Spain draft safety assertions, not validated Spanish legal or tariff expectations",
+    "No independently verified municipal rule"
+  ],
+  "tested_file_sha256": {
+    "maut-laenderinfo/index.html": "6dc21415496daceea6abdbabff3e4e242d7efa831cba1d90752b18b06ca9aa73",
+    "assets/publication.js": "5541e18fef22859c50dd09cf3937a1747abebe49fe3d8d774e89b21343deb812",
+    "scripts/release-manifest.mjs": "fbb8a6414a37a08bdb5f724f70e5fc13e4e1f87482ea3ed883fafcd16ddd9f90",
+    "scripts/check-release-manifest.mjs": "bd41c813696b29516b8002fa347b495f8fa19241acb721b6af8540b4ead7b1fd",
+    "tests/regression.cjs": "2fa482c33f5363decf43e04fc532f21b802f22d156cc0254925bd5d74f2da9a2",
+    "tests/release-manifest.test.mjs": "627e3f630c8f9a009583cd98b0e1919ae0fe1639a4426c8d8e27b1cb959c1d70"
+  }
+}

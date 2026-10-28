@@ -25,3 +25,7 @@ Dieser Branch ist ein Entwicklungskandidat. Der bestehende veröffentlichte V65-
 `node scripts/check-release-manifest.mjs` prüft den vorhandenen Entwurf offline gegen Git und HTML. `node scripts/check-release-manifest.mjs --require-approved` liefert für diesen ausdrücklich offenen Entwurf erwartungsgemäß Exitcode 2. Ungültige Daten liefern 1. Eine vollständige Freigabe kann nicht aus dem Modulstatus abgeleitet werden. `npm --prefix tests test` führt jetzt zusätzlich die Manifesttests aus.
 
 Ablauf für Freigabe, Aktualisierung und Rücknahme: [Manifestvertrag](docs/release-manifest.md). Spätere Datenbankänderungen sind ausschließlich als [Vorschlag](docs/database-integration-proposal.md) dokumentiert.
+
+## Spanien-Entwicklung
+
+Auf `feat/spain-country-integration` ist Spanien als fünftes Land mit ausdrücklich ungeprüften Entwurfsansichten ergänzt. Der aktuelle CLI-Standard ist Manifest 0002 (Schema 2). Fachliche Inhalte und unabhängig bestätigte kommunale Umweltzonenregeln sind wegen gesperrter offizieller Quellen noch nicht freigabefähig. Keine Veröffentlichung erfolgt. [Stand, Tests und konkrete Freigabebedingungen](docs/spain-release-review.md).

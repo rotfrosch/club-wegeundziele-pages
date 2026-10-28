@@ -3,7 +3,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const base = process.env.PORTAL_TEST_URL || 'http://127.0.0.1:8000';
 const results = { browser: [], profiles: 0, details: 0, expectedCases: 0, status: 0, emulation: [] };
-const countries = ['HR','AT','IT','FR'].map(iso_code => ({iso_code,publish_status:'draft',content_revision:1}));
+const countries = ['HR','AT','IT','FR','ES'].map(iso_code => ({iso_code,publish_status:'draft',content_revision:1}));
 function authSource(config) {
  return `const cfg=${JSON.stringify(config)};
  const session=cfg.anonymous?null:{user:{email:'test@example.invalid'}};
@@ -89,7 +89,46 @@ async function select(page,country,vehicle,values={}){await visible(page,'#count
  ];
  await withPage({},'/maut-laenderinfo/',async p=>{for(const[c,v,values,toll,speed]of cases){await select(p,c,v,values);assert.equal(await p.locator('#tollResult').innerText(),toll,JSON.stringify([c,v,values]));assert.equal(await p.locator('#speedResult').innerText(),speed,JSON.stringify([c,v,values]));results.expectedCases++;}});
  results.expectedFixtures=cases;
- await withPage({},'/',async p=>{results.status=await p.evaluate(async()=>{const {countryPublication:f}=await import('/assets/publication.js');const rows=['HR','AT','IT','FR'].map(iso_code=>({iso_code,publish_status:'published'}));const checks=[f('live',null,true)==='Länderfreigabe nicht verfügbar',f('live',[])==='Länderfreigabe unvollständig',f('live',rows).includes('nicht bestätigt'),f('draft',rows).includes('nicht bestätigt')];if(checks.some(x=>!x))throw Error('status');return checks.length;});});
+
+ // Spain is an unverified development view. Never assert legal readiness from UI tests.
+ results.spain={profiles:0,details:0,boundaries:0,search:0};
+ await withPage({},'/maut-laenderinfo/',async p=>{
+  for(const v of ['car','carTrailer','m35','m2','m3','m4','m35Trailer','mHeavyTrailer']){
+   await select(p,'ES',v);
+   assert.match(await p.locator('#tollResult').innerText(),/offen/);
+   assert.match(await p.locator('#checkStamp').innerText(),/keine Freigabe/);
+   assert.match(await p.locator('#overtakeResult').innerText(),/Einzelprüfung/);
+   for(const tab of ['toll','speed','overtake','box','special','sources','abbr']){
+    await p.locator(`[data-tab="${tab}"]`).click();
+    assert.match(await p.locator('#detailTitle').innerText(),/Spanien/);
+    assert.match(await p.locator('#detailText').innerText(),/Prüfung und Freigabe offen/);
+    assert.doesNotMatch(await p.locator('#detailText').innerText(),/undefined|NaN/);
+    results.spain.details++;
+   }
+   results.spain.profiles++;
+  }
+  await select(p,'ES','m35');
+  await p.locator('#esClass').fill('M1');await p.locator('#esAxles').fill('2');await p.locator('#esHeight').fill('300');
+  for(const [mass,expected] of [['3499',/bis einschließlich/],['3500',/bis einschließlich/],['3501',/widerspricht/],['0',/ungültig/],['-1',/ungültig/],['3500.5',/ungültig/],['',/fehlen/]]){
+   await p.locator('#esMass').fill(mass);assert.match(await p.locator('#esProfileStatus').innerText(),expected);results.spain.boundaries++;
+  }
+  await select(p,'ES','m2');await p.locator('#esClass').fill('M1');await p.locator('#esMass').fill('3501');await p.locator('#esHeight').fill('301');
+  assert.match(await p.locator('#esProfileStatus').innerText(),/über 3.500/);results.spain.boundaries++;
+  await p.locator('#esAxles').fill('3');assert.match(await p.locator('#esProfileStatus').innerText(),/Achszahl widerspricht/);results.spain.boundaries++;
+  await select(p,'ES','mHeavyTrailer');await p.locator('#esClass').fill('M1');await p.locator('#esMass').fill('12001');await p.locator('#esHeight').fill('400');await p.locator('#esAxles').fill('4');await p.locator('#esTrailerAxles').fill('2');
+  assert.match(await p.locator('#esProfileStatus').innerText(),/2 Anhängerachsen/);results.spain.boundaries++;
+  await p.locator('#esTrailerAxles').fill('0');assert.match(await p.locator('#esProfileStatus').innerText(),/ungültig/);results.spain.boundaries++;
+  await p.locator('[data-tab="special"]').click();
+  const search=p.locator('#esZoneSearch');
+  await search.fill('malaga');assert.equal(await p.locator('#esZoneList article').count(),1);results.spain.search++;
+  await search.fill('MADRID');assert.equal(await p.locator('#esZoneList article').count(),1);results.spain.search++;
+  await search.fill('<img src=x onerror=alert(1)>');assert.equal(await p.locator('#esZoneList article').count(),0);assert.equal(await p.locator('#esZoneList img').count(),0);results.spain.search++;
+  await search.fill('');assert.equal(await p.locator('#esZoneList article').count(),6);assert.match(await p.locator('#esZoneCount').innerText(),/0 kommunale Regelungen geprüft/);results.spain.search++;
+  // Switching back must restore existing country behavior and hide Spain fields.
+  await select(p,'FR','m35',{heightBand:'ge3'});assert.equal(await p.locator('#esProfile').isVisible(),false);assert.equal(await p.locator('#tollResult').innerText(),'Klasse 3');
+ });
+
+ await withPage({},'/',async p=>{results.status=await p.evaluate(async()=>{const {countryPublication:f}=await import('/assets/publication.js');const rows=['HR','AT','IT','FR','ES'].map(iso_code=>({iso_code,publish_status:'published'}));const checks=[f('live',null,true)==='Länderfreigabe nicht verfügbar',f('live',[])==='Länderfreigabe unvollständig',f('live',rows).includes('nicht bestätigt'),f('draft',rows).includes('nicht bestätigt')];if(checks.some(x=>!x))throw Error('status');return checks.length;});});
  for(const device of [null,'iPad (gen 7)','iPhone 13'])await withPage({},'/maut-laenderinfo/',async p=>{await select(p,'FR','m35',{heightBand:'ge3'});await p.locator('[data-tab="toll"]').click();assert.match(await p.locator('#detailTitle').innerText(),/Frankreich/);assert.equal(await p.locator('#country').isVisible(),true);results.emulation.push(device||'Desktop');},device);
  assert.deepEqual(results.pageErrors || [],[],'Uncaught browser errors');
  results.device=process.env.PORTAL_TEST_DEVICE || 'Desktop';

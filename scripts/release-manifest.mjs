@@ -29,7 +29,10 @@ export function validateManifest(manifest, {previous = null, today = new Date().
   } else {
     require(object(m.previous) && text(m.previous.path) && digest(m.previous.sha256), 'Vorgängerreferenz fehlt.');
     require(object(previous), 'Vorgängermanifest muss zur Prüfung vorliegen.');
-    if (object(previous)) require(previous.sequence === m.sequence - 1, 'Manifestsequenz widerspricht dem Vorgänger.');
+    if (object(previous)) {
+      require(previous.sequence === m.sequence - 1, 'Manifestsequenz widerspricht dem Vorgänger.');
+      require(!(previous.schema_version === 2 && m.schema_version !== 2), 'Schema 2 darf nicht zurückgestuft werden.');
+    }
   }
   const rows = object(m.countries) ? m.countries : {};
   require(Object.keys(rows).length === expected.length && Object.keys(rows).every(code => expected.includes(code)), 'Genau HR, AT, IT und FR sowie in Schema 2 ES sind erforderlich.');

@@ -75,3 +75,20 @@ test('CLI validates actual Git/HTML bytes and distinguishes incomplete release',
 
 test('Withdrawal requires a distinct decision reference',()=>{const prior=approved(),m=next(prior);m.status='withdrawn';m.countries.HR.approval={...m.countries.HR.approval,status:'withdrawn',reason:'TEST conflict'};invalid(m,/neuen Entscheidungsnachweis/,prior);});
 test('Changing approval responsibility cannot reuse the old evidence',()=>{const prior=approved(),m=next(prior);m.countries.HR.approval.responsible='TEST different approver';invalid(m,/neue Freigabeentscheidung/,prior);});
+
+test('Spain snapshot preserves all four prior country records exactly',()=>{
+ const m=JSON.parse(readFileSync(join(root,'releases/countrycheck/manifest-0002.json')));
+ for(const code of COUNTRIES)assert.deepEqual(m.countries[code],draft.countries[code]);
+ const r=validate(m,draft);assert.deepEqual(r.errors,[]);assert.equal(r.ready,false);
+ assert.ok(r.open.includes('ES: Quellenprüfung offen.'));
+});
+test('Schema 2 requires Spain and refuses release without its evidence',()=>{
+ const m=approved();m.schema_version=2;
+ invalid(m,/ES: Länderdatensatz fehlt/);
+ m.countries.ES=copy(draft.countries.HR);invalid(m,/Manifestfreigabe ohne vollständige/);
+ m.countries.ES.approval.status='approved';invalid(m,/ES: Freigabe ohne/);
+});
+test('Spain cannot disappear through schema downgrade',()=>{
+ const prior=approved();prior.schema_version=2;prior.countries.ES=copy(prior.countries.HR);
+ const m=next(prior);m.schema_version=1;delete m.countries.ES;invalid(m,/zurückgestuft/,prior);
+});

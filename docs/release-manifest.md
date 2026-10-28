@@ -73,3 +73,7 @@ Das ist eine **dokumentierte Rücknahme**, kein operativer Eingriff in das beste
 ## Nachweisgrenzen
 
 Git-Historie und verkettete Hashes machen Änderungen prüfbar; sie verhindern keine autorisierte Umschreibung der gesamten Historie. Geschützte Branches, Reviewregeln, vertrauenswürdige Entscheidungsnachweise und gegebenenfalls Signaturen müssen organisatorisch vereinbart werden. Der Validator kann Rechtsrichtigkeit, Personenidentität und externe Belege nicht selbst bestätigen.
+
+## Spanien-Entwurf (Schema 2)
+
+`manifest-0002.json` ergänzt ES und erhält die vier bisherigen Länderobjekte unverändert. Schema 2 verlangt alle fünf Länder; ein Rückschritt zu Schema 1 ist gesperrt. Schema 1 bleibt für historische Snapshots unterstützt. Die CLI prüft standardmäßig 0002. Für dieses HTML ist 0001 weiterhin als historischer Snapshot gültig, entspricht aber nicht mehr der aktuellen Arbeitskopie. ES-Revision 1 bezeichnet ausschließlich den ungeprüften Entwicklungsinhalt, keine abgeschlossene fachliche Revision. Quellen- und Freigabenachweise bleiben offen. Details und erforderliche Schritte: [Spanien-Freigabeprüfung](spain-release-review.md).
