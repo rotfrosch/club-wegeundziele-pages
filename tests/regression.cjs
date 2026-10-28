@@ -32,7 +32,7 @@ async function pageFor(config={},device) {
 async function test(name,fn){await fn();results.browser.push(name);console.log('PASS',name);}
 async function withPage(config,path,fn,device){const {context,page}=await pageFor(config,device);try{await page.goto(base+path);await fn(page);}finally{await context.close();}}
 async function visible(page,selector){await page.locator(selector).waitFor({state:'visible'});}
-async function select(page,country,vehicle,values={}){await visible(page,'#country');await page.locator('#readinessNotice').waitFor({state:'hidden'});await page.selectOption('#country',country);await page.selectOption('#vehicle',vehicle);for(const [id,v]of Object.entries(values))await page.selectOption('#'+id,v);await page.waitForFunction(()=>document.querySelector('#tollResult').textContent.trim() && document.querySelector('#tollResult').textContent!=='—');}
+async function select(page,country,vehicle,values={}){await visible(page,'#country');await page.locator('#readinessNotice').waitFor({state:'hidden'});await page.selectOption('#country',country);await page.selectOption('#vehicle',vehicle);for(const [id,v]of Object.entries(values))await page.selectOption('#'+id,v);await page.waitForFunction(()=>document.querySelector('#tollResult').textContent.trim() && document.querySelector('#tollResult').textContent!=='—');await visible(page,'#tollResult');}
 (async()=>{
  browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH||'/usr/bin/chromium',headless:true,args:['--no-sandbox']});
  await test('01 Anonymous login',()=>withPage({anonymous:true},'/',p=>visible(p,'#loginView')));

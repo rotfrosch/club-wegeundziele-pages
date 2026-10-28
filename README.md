@@ -10,7 +10,7 @@ Supabase schützt Mitgliederdaten und Berechtigungen serverseitig per RLS. Die l
 
 ## Prüfungen
 
-`npm --prefix tests ci`, anschließend bei laufendem HTTP-Server `npm --prefix tests test`. Erforderlich sind Node.js und Chromium; ein abweichender Browserpfad lässt sich mit `CHROMIUM_PATH`, die Testadresse mit `PORTAL_TEST_URL` setzen. Playwright ist im separaten Test-Lockfile gepinnt. Ergebnisse werden lokal in `tests/results.json` geschrieben.
+`npm --prefix tests ci`, anschließend bei laufendem HTTP-Server `npm --prefix tests test`. Erforderlich sind Node.js und Chromium; ein abweichender Browserpfad lässt sich mit `CHROMIUM_PATH`, die Testadresse mit `PORTAL_TEST_URL` setzen. Playwright ist im separaten Test-Lockfile gepinnt. Ergebnisse werden lokal in `tests/results*.json` geschrieben. Mit `PORTAL_TEST_DEVICE='iPhone 13'` oder `PORTAL_TEST_DEVICE='iPad (gen 7)'` lässt sich der vollständige Lauf zusätzlich in Geräte-Emulation starten.
 
 Die Tests umfassen 18 Browser-Regressionen, sämtliche 126 Kombinationen sichtbarer Fahrzeugfelder mit sieben Detailthemen (882 Ansichten), 14 festgelegte Sollwertfälle, vier Statuslogik-Prüfungen sowie Desktop-, iPad- und iPhone-Emulation. Einzelheiten und Grenzen: [Reparaturbericht](docs/recovery-report.md).
 

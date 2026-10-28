@@ -1,0 +1,234 @@
+{
+  "date": "2026-10-28",
+  "application_commit": "c783008be4c6eee510cc7023e60e7877843213c1",
+  "runtime": {
+    "node": "24.19.0",
+    "chromium": "154.0.8037.57",
+    "playwright": "1.58.2"
+  },
+  "method": "Local HTTP, mocked authentication and Supabase responses; external JavaScript-test network requests aborted",
+  "devices": [
+    {
+      "device": "Desktop",
+      "browser": [
+        "01 Anonymous login",
+        "02 CDN failure on portal",
+        "03 CDN failure on admin",
+        "04 CDN failure on countrycheck",
+        "05 Session API failure",
+        "06 denied=1 explanation",
+        "07 Missing admin settings",
+        "08 Failed admin settings",
+        "09 Empty country records",
+        "10 Online module does not approve countries",
+        "11 Country permission redirects",
+        "12 Nine accessible select labels",
+        "13 Hidden trailer brake cannot change heavy profile",
+        "14 Hidden length cannot affect solo Italian car",
+        "15 Keyboard detail navigation",
+        "16 Logout navigation",
+        "17 Failed module list is visible",
+        "18 JavaScript disabled notices on all pages"
+      ],
+      "profiles": 126,
+      "details": 882,
+      "expectedCases": 14,
+      "status": 4,
+      "emulation": [
+        "Desktop",
+        "iPad (gen 7)",
+        "iPhone 13"
+      ]
+    },
+    {
+      "device": "iPad (gen 7)",
+      "browser": [
+        "01 Anonymous login",
+        "02 CDN failure on portal",
+        "03 CDN failure on admin",
+        "04 CDN failure on countrycheck",
+        "05 Session API failure",
+        "06 denied=1 explanation",
+        "07 Missing admin settings",
+        "08 Failed admin settings",
+        "09 Empty country records",
+        "10 Online module does not approve countries",
+        "11 Country permission redirects",
+        "12 Nine accessible select labels",
+        "13 Hidden trailer brake cannot change heavy profile",
+        "14 Hidden length cannot affect solo Italian car",
+        "15 Keyboard detail navigation",
+        "16 Logout navigation",
+        "17 Failed module list is visible",
+        "18 JavaScript disabled notices on all pages"
+      ],
+      "profiles": 126,
+      "details": 882,
+      "expectedCases": 14,
+      "status": 4,
+      "emulation": [
+        "Desktop",
+        "iPad (gen 7)",
+        "iPhone 13"
+      ]
+    },
+    {
+      "device": "iPhone 13",
+      "browser": [
+        "01 Anonymous login",
+        "02 CDN failure on portal",
+        "03 CDN failure on admin",
+        "04 CDN failure on countrycheck",
+        "05 Session API failure",
+        "06 denied=1 explanation",
+        "07 Missing admin settings",
+        "08 Failed admin settings",
+        "09 Empty country records",
+        "10 Online module does not approve countries",
+        "11 Country permission redirects",
+        "12 Nine accessible select labels",
+        "13 Hidden trailer brake cannot change heavy profile",
+        "14 Hidden length cannot affect solo Italian car",
+        "15 Keyboard detail navigation",
+        "16 Logout navigation",
+        "17 Failed module list is visible",
+        "18 JavaScript disabled notices on all pages"
+      ],
+      "profiles": 126,
+      "details": 882,
+      "expectedCases": 14,
+      "status": 4,
+      "emulation": [
+        "Desktop",
+        "iPad (gen 7)",
+        "iPhone 13"
+      ]
+    }
+  ],
+  "expectedFixtures": [
+    [
+      "HR",
+      "car",
+      {},
+      "Klasse I*",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "HR",
+      "m35",
+      {},
+      "Klasse II",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "HR",
+      "carTrailer",
+      {
+        "brake": "unbraked"
+      },
+      "Klasse II",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "HR",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "2",
+        "trailerAxles": "1"
+      },
+      "Klasse III",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "HR",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "3",
+        "trailerAxles": "1"
+      },
+      "Klasse IV",
+      "50 · 80 · 80 · 90 km/h"
+    ],
+    [
+      "AT",
+      "car",
+      {},
+      "Vignette",
+      "50 · 100 · 100 · 130 km/h"
+    ],
+    [
+      "AT",
+      "carTrailer",
+      {
+        "brake": "atBE"
+      },
+      "Vignette",
+      "50 · 70 · 80 · 80 km/h"
+    ],
+    [
+      "AT",
+      "mHeavyTrailer",
+      {
+        "motorhomeAxles": "3"
+      },
+      "GO-Maut · Kat. 3",
+      "50 · 70 · 80 · 80 km/h"
+    ],
+    [
+      "IT",
+      "car",
+      {},
+      "Klasse A*",
+      "50 · 90 · 110 · 130 km/h"
+    ],
+    [
+      "IT",
+      "m4",
+      {
+        "motorhomeAxles": "5",
+        "weightBand": "over12"
+      },
+      "Klasse 5",
+      "50 · 70 · 70 · 80 km/h"
+    ],
+    [
+      "IT",
+      "carTrailer",
+      {
+        "trailerAxles": "2"
+      },
+      "Klasse 4",
+      "50 · 70 · 70 · 80 km/h"
+    ],
+    [
+      "FR",
+      "m35",
+      {
+        "heightBand": "ge3"
+      },
+      "Klasse 3",
+      "50 · 80/90 · 110 · 130 km/h"
+    ],
+    [
+      "FR",
+      "carTrailer",
+      {
+        "heightBand": "ge3",
+        "comboWeight": "gt12"
+      },
+      "Klasse 4",
+      "50 · 60–80 · 80 · 90 km/h"
+    ],
+    [
+      "FR",
+      "m2",
+      {
+        "weightBand": "over12"
+      },
+      "Klasse 3",
+      "50 · 80 · 80 · 90 km/h"
+    ]
+  ],
+  "legalValidation": false,
+  "productionDatabaseModified": false
+}

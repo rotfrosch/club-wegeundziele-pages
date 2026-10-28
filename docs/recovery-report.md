@@ -17,7 +17,22 @@ Die verlorene Implementierung und ihre Testartefakte konnten nicht wiederhergest
 
 ## Prüfstatus
 
-Der endgültige Prüfstatus wird nach dem vollständigen Lauf ergänzt. Die Matrix wird aus tatsächlich sichtbaren Zusatzfeldern erzeugt, nicht auf die gewünschte Anzahl aufgefüllt. Die 14 Sollwertfälle prüfen feste Mautklassen und Geschwindigkeitsangaben aus dem Ausgangsstand für alle vier Länder und ausgewählte Achs-, Brems-, Höhen- und Gewichtsschwellen. Die Ergebnisdatei enthält die tatsächlich geprüften Profile und Sollwerte.
+Alle Prüfungen bestanden im lokalen Chromium mit kontrollierten Datenantworten. Der vollständige Prüfumfang lief auf Desktop, iPad (gen 7) und iPhone 13; zusätzlich enthält jeder Lauf repräsentative Navigation über alle drei Emulationen.
+
+| Prüfung | Je Geräteprofil |
+| --- | ---: |
+| Browser-Regressionen | 18 bestanden |
+| Fahrzeugprofile | 126 bestanden |
+| Detailansichten (7 je Profil) | 882 bestanden |
+| Feste fachliche Sollwertfälle | 14 bestanden |
+| Statuslogik | 4 bestanden |
+| Unbehandelte JavaScript-Fehler | 0 |
+
+Die Matrix wird aus tatsächlich sichtbaren Zusatzfeldern erzeugt, nicht auf die gewünschte Anzahl aufgefüllt. Die 14 Sollwertfälle prüfen feste Mautklassen und Geschwindigkeitsangaben aus dem Ausgangsstand für alle vier Länder und ausgewählte Achs-, Brems-, Höhen- und Gewichtsschwellen. Sterne an den vorhandenen Pkw-Mautklassen bleiben Teil des Sollwerts. Bei der Testentwicklung wurden Bereitschafts- und Sichtbarkeitsbedingungen präzisiert; frühere abgebrochene Läufe werden nicht als erfolgreiche Prüfungen gezählt.
+
+Die neun verknüpften Auswahlbeschriftungen, Tastaturnavigation, `denied=1`, Logout, JavaScript-Deaktivierung, gescheiterte CDN-/Auth-Abfragen sowie fehlende und leere Admin-Daten sind Bestandteil der Regressionen. Auch die Bestandsregel für verborgene Verwaltungslinks wird geprüft. JavaScript-Syntaxprüfung, `git diff --check` und Installation mit `npm --prefix tests ci` bestanden.
+
+Die geprüften Anwendungsdateien stammen aus Commit `c783008`; anschließend wurden nur die Testbereitschaft und dieser Bericht ergänzt. Maschinenlesbare Geräteergebnisse und die 14 festen Sollwerte stehen in [validation-results.json](validation-results.json). Laufzeit: Node 24.19.0, Playwright 1.58.2, Chromium 154.0.8037.57. Die vollständigen lokalen Profilmatrizen bleiben in den ignorierten `tests/results*.json`.
 
 ## Grenzen
 
