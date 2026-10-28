@@ -62,6 +62,7 @@
 <script type="module">
 try {
 const { supabase, hasPermission } = await window.portalReady.loadAuth();
+const { countryPublication } = await import("./assets/publication.js");
 
 const loginView = document.querySelector("#loginView");
 const portalView = document.querySelector("#portalView");
@@ -113,18 +114,25 @@ async function showPortal(session){
     .eq("app_key","countrycheck")
     .maybeSingle();
 
+  const {data: countries, error: countriesError} = await supabase
+    .from('countrycheck_countries')
+    .select('iso_code,publish_status,content_revision');
+  const countryStatus = countryPublication(null, countries, !!countriesError);
+  const statusNotice = document.createElement('p');
+  statusNotice.textContent = countryStatus + '. Modulstatus Online bestätigt keine vollständige Länderfreigabe.';
+  portalNotice.append(statusNotice);
   moduleGrid.innerHTML = (modules || []).map(m => {
     const live = m.status === "live";
     const preview = isAdmin && m.slug === "countrycheck";
     const clickable = live || preview;
     const cardIcon = m.slug === "camping-car-park" ? '<span class="pin-icon">⌖</span>' : (m.slug === "fuel-prices" ? fuelIcon : roadIcon);
-    const version = m.slug === "countrycheck" && settings?.online_version ? "Version " + settings.online_version : "";
+    const version = m.slug === "countrycheck" && settings?.online_version ? "Gemeldete Online-Version " + settings.online_version : "";
 
     const card =
       '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
       cardArtwork(m.slug) +
       '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + moduleTitle(m) + '</h2></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
-      '<div class="module-meta"><span class="status ' + m.status + '">' + (live ? 'Online' : 'In Vorbereitung') + '</span><span>' + version + '</span></div>' +
+      '<div class="module-meta"><span class="status ' + m.status + '">' + (live ? 'Modul online' : 'In Vorbereitung') + '</span><span>' + version + '</span></div>' +
       '</article>';
 
     return clickable ? '<a class="module-link" href=".' + m.path + '/">' + card + '</a>' : card;

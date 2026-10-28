@@ -806,14 +806,14 @@ select{
   <div class="vehicle-body">
     <div class="controls">
       <div class="field-card country-card">
-        <label>🌍 Land</label>
+        <label for="country">🌍 Land</label>
         <div class="select-shell">
           <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option></select>
         </div>
       </div>
 
       <div class="field-card vehicle-card">
-        <label>🚐 Fahrzeugart</label>
+        <label for="vehicle">🚐 Fahrzeugart</label>
         <div class="select-shell">
         <select id="vehicle" required>
           <option value="" selected disabled>Bitte Fahrzeugart auswählen</option>
@@ -832,14 +832,14 @@ select{
 
     <div id="subcontrols" class="subcontrols">
       <div class="field-card" id="brakeField">
-        <label id="brakeLabel">🛞 Anhänger</label>
+        <label id="brakeLabel" for="brake">🛞 Anhänger</label>
         <div class="select-shell"><select id="brake">
           <option value="braked">gebremst</option>
           <option value="unbraked">ungebremst</option>
         </select></div>
       </div>
       <div class="field-card" id="motorhomeAxlesField">
-        <label>🚐 Achsen Wohnmobil</label>
+        <label for="motorhomeAxles">🚐 Achsen Wohnmobil</label>
         <div class="select-shell"><select id="motorhomeAxles">
           <option value="2">2 Achsen</option>
           <option value="3">3 Achsen</option>
@@ -847,14 +847,14 @@ select{
         </select></div>
       </div>
       <div class="field-card" id="weightBandField">
-        <label>⚖️ Gewichtsklasse</label>
+        <label for="weightBand">⚖️ Gewichtsklasse</label>
         <div class="select-shell"><select id="weightBand">
           <option value="upto12">über 3,5 t bis 12 t</option>
           <option value="over12">über 12 t</option>
         </select></div>
       </div>
       <div class="field-card" id="heightBandField">
-        <label id="heightBandLabel">📐 Höhe</label>
+        <label id="heightBandLabel" for="heightBand">📐 Höhe</label>
         <div class="select-shell"><select id="heightBand">
           <option value="le2">bis 2,00 m</option>
           <option value="between2and3">über 2,00 m bis unter 3,00 m</option>
@@ -862,7 +862,7 @@ select{
         </select></div>
       </div>
       <div class="field-card" id="comboWeightField">
-        <label>⚖️ Zulässiges Gesamtgewicht Gespann (PTRA)</label>
+        <label for="comboWeight">⚖️ Zulässiges Gesamtgewicht Gespann (PTRA)</label>
         <div class="select-shell"><select id="comboWeight">
           <option value="le35">bis 3,5 t</option>
           <option value="gt35le12">über 3,5 t bis 12 t</option>
@@ -870,14 +870,14 @@ select{
         </select></div>
       </div>
       <div class="field-card" id="trailerAxlesField">
-        <label>⚙️ Anhängerachsen</label>
+        <label for="trailerAxles">⚙️ Anhängerachsen</label>
         <div class="select-shell"><select id="trailerAxles">
           <option value="1">1 Achse</option>
           <option value="2">2 Achsen</option>
         </select></div>
       </div>
       <div class="field-card" id="lengthField">
-        <label id="lengthLabel">📏 Gesamtlänge</label>
+        <label id="lengthLabel" for="length">📏 Gesamtlänge</label>
         <div class="select-shell"><select id="length">
           <option value="short">bis 7 m</option>
           <option value="long">über 7 m</option>
@@ -1315,6 +1315,12 @@ function configureSubcontrols(){
 
 }
 
+function selectedValue(control){
+  const field=control.closest('.field-card');
+  return subcontrols.classList.contains('show') && field && field.style.display!=='none'
+    ? control.value : '';
+}
+
 function current(){
   if(!country.value||!vehicle.value) return null;
   const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:hrBase;
@@ -1323,11 +1329,11 @@ function current(){
 
   if(country.value==='HR'){
     if(vehicle.value==='carTrailer'||vehicle.value==='m35Trailer'){
-      if(brake.value==='unbraked') d.speed='50 · 80 · 80 · 90 km/h';
+      if(selectedValue(brake)==='unbraked') d.speed='50 · 80 · 80 · 90 km/h';
     }
     if(vehicle.value==='mHeavyTrailer'){
-      const wa=motorhomeAxles.value;
-      const ta=trailerAxles.value;
+      const wa=selectedValue(motorhomeAxles);
+      const ta=selectedValue(trailerAxles);
       if(wa==='2' && ta==='1'){
         d.toll='Klasse III';
         d.tollNote='2 Achsen Wohnmobil + 1 Achse Anhänger';
@@ -1341,12 +1347,12 @@ function current(){
 
   if(country.value==='AT'){
     if(vehicle.value==='carTrailer'||vehicle.value==='m35Trailer'){
-      if(brake.value==='atLight') d.speed='50 · 100 · 100 · 100 km/h';
-      if(brake.value==='atCombo35') d.speed='50 · 80 · 100 · 100 km/h';
-      if(brake.value==='atBE') d.speed='50 · 70 · 80 · 80 km/h';
+      if(selectedValue(brake)==='atLight') d.speed='50 · 100 · 100 · 100 km/h';
+      if(selectedValue(brake)==='atCombo35') d.speed='50 · 80 · 100 · 100 km/h';
+      if(selectedValue(brake)==='atBE') d.speed='50 · 70 · 80 · 80 km/h';
     }
     if(vehicle.value==='mHeavyTrailer'){
-      const wa=motorhomeAxles.value;
+      const wa=selectedValue(motorhomeAxles);
       d.toll=wa==='2'?'GO-Maut · Kat. 2':wa==='3'?'GO-Maut · Kat. 3':'GO-Maut · Kat. 4+';
       d.tollNote=`${wa==='4'?'4+':wa} Achsen am Wohnmobil · Anhängerachsen werden nicht mitgerechnet`;
     }
@@ -1354,7 +1360,7 @@ function current(){
 
   if(country.value==='IT'){
     if(['m2','m3','m4'].includes(vehicle.value)){
-      if(weightBand.value==='over12'){
+      if(selectedValue(weightBand)==='over12'){
         d.speed='50 · 70 · 70 · 80 km/h';
       }else{
         d.speed='50 · 80 · 80 · 100 km/h';
@@ -1362,12 +1368,12 @@ function current(){
     }
 
     if(vehicle.value==='m4'){
-      d.toll=motorhomeAxles.value==='5'?'Klasse 5':'Klasse 4';
-      d.tollNote=motorhomeAxles.value==='5'?'5 oder mehr Achsen':'4 Achsen';
+      d.toll=selectedValue(motorhomeAxles)==='5'?'Klasse 5':'Klasse 4';
+      d.tollNote=selectedValue(motorhomeAxles)==='5'?'5 oder mehr Achsen':'4 Achsen';
     }
 
     if(vehicle.value==='carTrailer'||vehicle.value==='m35Trailer'){
-      const ta=Number(trailerAxles.value||1);
+      const ta=Number(selectedValue(trailerAxles)||1);
       const total=2+ta;
       d.toll=`Klasse ${total}`;
       d.tollNote=`2 Achsen Zugfahrzeug + ${ta} Achse${ta===1?'':'n'} Anhänger = ${total} Achsen`;
@@ -1375,8 +1381,8 @@ function current(){
     }
 
     if(vehicle.value==='mHeavyTrailer'){
-      const wa=Number(motorhomeAxles.value||2);
-      const ta=Number(trailerAxles.value||1);
+      const wa=Number(selectedValue(motorhomeAxles)||2);
+      const ta=Number(selectedValue(trailerAxles)||1);
       const total=wa>=4?5:wa+ta;
       d.toll=total>=5?'Klasse 5':`Klasse ${total}`;
       d.tollNote=`${wa>=4?'4+':wa} Achsen Wohnmobil + ${ta} Achse${ta===1?'':'n'} Anhänger`;
@@ -1389,11 +1395,11 @@ function current(){
     const v=vehicle.value;
 
     if(v==='m35'){
-      if(heightBand.value==='le2'){
+      if(selectedValue(heightBand)==='le2'){
         d.toll='Klasse 1';
         d.tollNote='bis 2,00 m · PTAC bis 3,5 t';
         d.box='ADAC/Bip&Go optional';
-      }else if(heightBand.value==='between2and3'){
+      }else if(selectedValue(heightBand)==='between2and3'){
         d.toll='Klasse 2';
         d.tollNote='über 2,00 m bis unter 3,00 m · PTAC bis 3,5 t';
         d.box='ADAC/Bip&Go optional';
@@ -1405,11 +1411,11 @@ function current(){
     }
 
     if(v==='carTrailer'||v==='m35Trailer'){
-      if(heightBand.value==='le2'){
+      if(selectedValue(heightBand)==='le2'){
         d.toll='Klasse 1';
         d.tollNote='Gesamthöhe des Gespanns bis 2,00 m';
         d.box='ADAC/Bip&Go optional';
-      }else if(heightBand.value==='between2and3'){
+      }else if(selectedValue(heightBand)==='between2and3'){
         d.toll='Klasse 2';
         d.tollNote='Gesamthöhe des Gespanns über 2,00 m bis unter 3,00 m';
         d.box='ADAC/Bip&Go optional';
@@ -1421,15 +1427,15 @@ function current(){
     }
 
     if(['m2','m3','m4'].includes(v)){
-      d.speed=weightBand.value==='over12'
+      d.speed=selectedValue(weightBand)==='over12'
         ? '50 · 80 · 80 · 90 km/h'
         : '50 · 80 · 100 · 110 km/h';
     }
 
     if(['carTrailer','m35Trailer','mHeavyTrailer'].includes(v)){
-      if(comboWeight.value==='le35'){
+      if(selectedValue(comboWeight)==='le35'){
         d.speed='50 · 80/90 · 110 · 130 km/h';
-      }else if(comboWeight.value==='gt35le12'){
+      }else if(selectedValue(comboWeight)==='gt35le12'){
         d.speed='50 · 80 · 90 · 90 km/h';
       }else{
         d.speed='50 · 60–80 · 80 · 90 km/h';
@@ -1600,7 +1606,7 @@ function renderDetailAT(d){
         atCombo35:'schwerer Anhänger, Summe der höchsten zulässigen Gesamtgewichte bis 3,5 t',
         atBE:'schwerer Anhänger / Gespann über 3,5 t'
       };
-      selectionText+=` Gewählt ist: <b>${labels[brake.value]}</b>.`;
+      selectionText+=` Gewählt ist: <b>${labels[selectedValue(brake)]}</b>.`;
     }
 
     detailText.innerHTML=`
@@ -1731,7 +1737,7 @@ function renderDetailIT(d){
   const v=vehicle.value;
   const isTrailer=['carTrailer','m35Trailer','mHeavyTrailer'].includes(v);
   const isHeavy=['m2','m3','m4','mHeavyTrailer'].includes(v);
-  const over7=lengthSel.value==='long';
+  const over7=selectedValue(lengthSel)==='long';
 
   if(activeTab==='toll'){
     detailTitle.textContent='💶 Maut Italien im Detail';
@@ -1756,7 +1762,7 @@ function renderDetailIT(d){
       extra='<p>Bei Niederschlag sinken die allgemeinen Höchstgrenzen auf Autobahnen auf 110 km/h und auf außerörtlichen Hauptstraßen auf 90 km/h.</p>';
     }
     if(isHeavy && !isTrailer){
-      extra+=`<p>Für schwere Wohnmobile gilt die gewählte Gewichtsklasse: <b>${weightBand.value==='over12'?'über 12 t':'über 3,5 t bis 12 t'}</b>.</p>`;
+      extra+=`<p>Für schwere Wohnmobile gilt die gewählte Gewichtsklasse: <b>${selectedValue(weightBand)==='over12'?'über 12 t':'über 3,5 t bis 12 t'}</b>.</p>`;
     }
     if(isTrailer){
       extra+=`<p>Für Fahrzeugkombinationen mit Anhänger gilt nach Art. 142 grundsätzlich <b>70 km/h außerhalb geschlossener Ortschaften</b> und <b>80 km/h auf Autobahnen</b>.</p>`;
@@ -1885,7 +1891,7 @@ function renderDetailFR(d){
   const v=vehicle.value;
   const isTrailer=['carTrailer','m35Trailer','mHeavyTrailer'].includes(v);
   const isHeavy=['m2','m3','m4','mHeavyTrailer'].includes(v);
-  const over7=isTrailer && lengthSel.value==='long';
+  const over7=isTrailer && selectedValue(lengthSel)==='long';
 
   if(activeTab==='toll'){
     detailTitle.textContent='💶 Maut Frankreich im Detail';
@@ -1912,13 +1918,13 @@ function renderDetailFR(d){
         <p>Für Pkw und Wohnmobile bis 3,5 t gelten grundsätzlich die normalen französischen Höchstgeschwindigkeiten. Auf normalen zweispurigen Straßen ohne Mitteltrennung gilt meist <b>80 km/h</b>; einzelne Départements können bestimmte Abschnitte wieder mit <b>90 km/h</b> freigeben.</p>
         <p>Bei Regen gelten für leichte Fahrzeuge auf Autobahnen grundsätzlich 110 km/h und auf zweibahnigen Schnellstraßen 100 km/h.</p>`;
     }else if(['m2','m3','m4'].includes(v)){
-      explanation=weightBand.value==='over12'
+      explanation=selectedValue(weightBand)==='over12'
         ? `<p>Bei einem Wohnmobil über 12 t greifen die allgemeinen Grenzen für Fahrzeuge über 3,5 t: <b>90 km/h Autobahn, 80 km/h auf prioritären bzw. sonstigen Straßen</b>.</p>`
         : `<p>Ein Wohnmobil über 3,5 t bis einschließlich 12 t ist als Fahrzeug zur Personenbeförderung nach Art. R413-8-1 auf <b>110 km/h Autobahn, 100 km/h auf prioritären Straßen mit getrennten Richtungsfahrbahnen und 80 km/h auf anderen Straßen</b> begrenzt.</p>`;
     }else if(isTrailer){
-      explanation=comboWeight.value==='le35'
+      explanation=selectedValue(comboWeight)==='le35'
         ? `<p>Bleibt das zulässige Gesamtgewicht des Gespanns bei höchstens 3,5 t, gelten grundsätzlich die normalen Grenzen für leichte Fahrzeuge.</p>`
-        : comboWeight.value==='gt35le12'
+        : selectedValue(comboWeight)==='gt35le12'
           ? `<p>Bei einem Gespann mit PTRA über 3,5 t bis 12 t gilt Art. R413-8: <b>90 km/h Autobahn, 90 km/h auf prioritären Straßen mit getrennten Richtungsfahrbahnen und 80 km/h auf anderen Straßen</b>.</p>`
           : `<p>Bei einem Gespann mit PTRA über 12 t gilt weiterhin 90 km/h auf Autobahnen; auf sonstigen Straßen kann die Grenze bei Gespannen auf <b>60 km/h</b> sinken. Deshalb zeigt der Schnellcheck dort 60–80 km/h je nach Straßenart.</p>`;
     }
@@ -2048,8 +2054,8 @@ function renderDetailFR(d){
 }
 
 function renderDetailHR(d){
-  const long=d.trailer&&lengthSel.value==='long';
-  const unbraked=d.trailer&&brake.value==='unbraked';
+  const long=d.trailer&&selectedValue(lengthSel)==='long';
+  const unbraked=d.trailer&&selectedValue(brake)==='unbraked';
 
   if(activeTab==='toll'){
     detailTitle.textContent='💶 Maut im Detail';
