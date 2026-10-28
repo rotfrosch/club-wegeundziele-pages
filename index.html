@@ -95,7 +95,7 @@ async function showPortal(session){
   portalView.hidden = false;
   userMail.textContent = session.user.email || "";
 
-  const isAdmin = await hasPermission("admin:manage").catch(() => false);
+  const isAdmin = await hasPermission("admin:manage");
   adminLink.hidden = !isAdmin;
 
   const { data: modules, error } = await supabase
@@ -143,8 +143,8 @@ async function boot(){
   const { data, error } = await supabase.auth.getSession();
   if (error) throw error;
   if (data.session) {
-    const allowed = await hasPermission("campions-club:view").catch(() => false);
-    const admin = await hasPermission("admin:manage").catch(() => false);
+    const allowed = await hasPermission("campions-club:view");
+    const admin = await hasPermission("admin:manage");
     if (allowed || admin) return showPortal(data.session);
     await supabase.auth.signOut();
     note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
@@ -167,8 +167,8 @@ loginForm.addEventListener("submit", async e => {
     return;
   }
 
-  const allowed = await hasPermission("campions-club:view").catch(() => false);
-  const admin = await hasPermission("admin:manage").catch(() => false);
+  const allowed = await hasPermission("campions-club:view");
+  const admin = await hasPermission("admin:manage");
   if (!allowed && !admin) {
     await supabase.auth.signOut();
     note(loginNotice, "Für diesen Mitgliederbereich ist keine Freigabe hinterlegt.");
@@ -194,7 +194,8 @@ document.querySelector("#magicLink").addEventListener("click", async () => {
 });
 
 document.querySelector("#logoutBtn").addEventListener("click", async () => {
-  await supabase.auth.signOut();
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
   location.reload();
 });
 

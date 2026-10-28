@@ -41,7 +41,7 @@ try {
 const { supabase, getSession, hasPermission } = await window.portalReady.loadAuth();
 
 const session = await getSession();
-if (!session || !(await hasPermission("admin:manage").catch(() => false))) {
+if (!session || !(await hasPermission("admin:manage"))) {
   location.replace("../");
 } else {
   const { data: s, error: settingsError } = await supabase

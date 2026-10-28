@@ -14,7 +14,8 @@ function authSource(config) {
 }
 let browser;
 async function pageFor(config={},device) {
- const context=await browser.newContext(device?devices[device]:{viewport:{width:1440,height:1000}});
+ const selectedDevice=device || process.env.PORTAL_TEST_DEVICE;
+ const context=await browser.newContext(selectedDevice?devices[selectedDevice]:{viewport:{width:1440,height:1000}});
  await context.route('**/*',route=>{
   const url=new URL(route.request().url());
   if(url.origin!==base)return route.abort();
@@ -24,7 +25,9 @@ async function pageFor(config={},device) {
   }
   return route.continue();
  });
- return {context,page:await context.newPage()};
+ const page=await context.newPage();
+ page.on('pageerror',error=>{results.pageErrors ||= [];results.pageErrors.push(error.message);});
+ return {context,page};
 }
 async function test(name,fn){await fn();results.browser.push(name);console.log('PASS',name);}
 async function withPage(config,path,fn,device){const {context,page}=await pageFor(config,device);try{await page.goto(base+path);await fn(page);}finally{await context.close();}}
@@ -88,5 +91,6 @@ async function select(page,country,vehicle,values={}){await visible(page,'#count
  results.expectedFixtures=cases;
  await withPage({},'/',async p=>{results.status=await p.evaluate(async()=>{const {countryPublication:f}=await import('/assets/publication.js');const rows=['HR','AT','IT','FR'].map(iso_code=>({iso_code,publish_status:'published'}));const checks=[f('live',null,true)==='Länderfreigabe nicht verfügbar',f('live',[])==='Länderfreigabe unvollständig',f('live',rows).includes('nicht bestätigt'),f('draft',rows).includes('nicht bestätigt')];if(checks.some(x=>!x))throw Error('status');return checks.length;});});
  for(const device of [null,'iPad (gen 7)','iPhone 13'])await withPage({},'/maut-laenderinfo/',async p=>{await select(p,'FR','m35',{heightBand:'ge3'});await p.locator('[data-tab="toll"]').click();assert.match(await p.locator('#detailTitle').innerText(),/Frankreich/);assert.equal(await p.locator('#country').isVisible(),true);results.emulation.push(device||'Desktop');},device);
+ assert.deepEqual(results.pageErrors || [],[],'Uncaught browser errors');
  fs.writeFileSync(__dirname+'/results.json',JSON.stringify(results,null,2));console.log(JSON.stringify({...results,profileMatrix:undefined,expectedFixtures:undefined},null,2));
 })().catch(error=>{console.error(error);process.exitCode=1;}).finally(async()=>{if(browser)await browser.close();});
