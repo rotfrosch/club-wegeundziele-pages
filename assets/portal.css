@@ -10,3 +10,6 @@
 table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 @media(max-width:980px){.modules{grid-template-columns:repeat(2,minmax(0,1fr))}.modules>:last-child{grid-column:1/-1}.club-hero{min-height:0}.member-areas{padding-block:48px 72px}}
 @media(max-width:640px){.memberbar{align-items:flex-start;flex-direction:column;padding-block:14px}.userbox{justify-content:flex-start}.userbox .small{width:100%}.club-hero{padding:38px 24px 42px}.club-hero img{width:100%;max-width:560px}.club-hero>p:last-child{font-size:1rem}.member-areas{width:min(calc(100% - 32px),700px);padding-block:42px 60px}.section-heading h1{font-size:clamp(2.7rem,13vw,4rem)}.modules{grid-template-columns:1fr}.modules>:last-child{grid-column:auto}.module-art{height:140px}}
+
+/* Preserve programmatic visibility for permission and login controls. */
+[hidden]{display:none!important}

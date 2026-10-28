@@ -10,6 +10,7 @@ Die verlorene Implementierung und ihre Testartefakte konnten nicht wiederhergest
 - `index.html`: abgefangener Startfehler, Hinweis bei `denied=1`, getrennte Darstellung von Modulstatus und Länderfreigabe, JavaScript-Hinweis.
 - `admin/index.html`: Behandlung fehlender/fehlerhafter Versions- und Länderabfragen; Textausgabe statt HTML-Einfügung für Datenbankfelder; Hinweis bei leerer Länderliste.
 - `maut-laenderinfo/index.html`: abgefangene Auth-/Startfehler, gemeldete Revisionen und offene HTML-Zuordnung, verknüpfte Labels für alle neun Auswahlfelder, ignorierte Werte unsichtbarer Zusatzfelder in Berechnung und Details, JavaScript-Hinweis.
+- `assets/portal.css`: `hidden` bleibt auch bei als Flexbox gestalteten Verwaltungslinks wirksam.
 - `assets/publication.js`: keine Freigabe allein aus Modulstatus oder vorhandenen Länderzeilen ableiten.
 - `tests/*`, `.gitignore`: separater, gepinnter Browser-Testaufbau und lokale Ergebnisdatei.
 - `README.md`, `docs/*`: tatsächlicher Entwicklungsstand, Prüfumfang und offene Release-Entscheidung.
