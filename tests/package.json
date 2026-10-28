@@ -1,1 +1,11 @@
-{"name":"campions-portal-regression","private":true,"scripts":{"test":"node regression.cjs"},"devDependencies":{"playwright":"1.58.2"}}
+{
+  "name": "campions-portal-regression",
+  "private": true,
+  "scripts": {
+    "test": "node --test release-manifest.test.mjs && node regression.cjs",
+    "test:manifest": "node --test release-manifest.test.mjs"
+  },
+  "devDependencies": {
+    "playwright": "1.58.2"
+  }
+}

@@ -6,7 +6,7 @@ const text = value => typeof value === 'string' && value.trim().length > 0;
 const digest = value => typeof value === 'string' && /^[a-f0-9]{64}$/.test(value);
 const date = value => typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) &&
   !Number.isNaN(Date.parse(value)) && new Date(value).toISOString().slice(0, 10) === value;
-const https = value => {try {return new URL(value).protocol === 'https:';} catch {return false;}};
+const https = value => {try {const u = new URL(value);return u.protocol === 'https:' && !u.username && !u.password;} catch {return false;}};
 
 // Pure validation: no network, database, publication or filesystem side effects.
 export function validateManifest(manifest, {previous = null, today = new Date().toISOString().slice(0,10)} = {}) {
@@ -19,7 +19,7 @@ export function validateManifest(manifest, {previous = null, today = new Date().
   require(m.module === 'countrycheck', 'Falsches Modul.');
   require(['draft','approved','withdrawn'].includes(m.status), 'Ungültiger Manifeststatus.');
   const a = object(m.artifact) ? m.artifact : {};
-  require(/^[a-f0-9]{40}$/.test(a.git_commit || ''), 'artifact.git_commit muss ein vollständiger Commit sein.');
+  require(typeof a.git_commit === 'string' && /^[a-f0-9]{40}$/.test(a.git_commit), 'artifact.git_commit muss ein vollständiger Commit sein.');
   require(a.path === 'maut-laenderinfo/index.html', 'Unerwarteter HTML-Pfad.');
   require(digest(a.sha256), 'HTML-SHA-256 fehlt oder ist ungültig.');
   require(a.html_version === `sha256:${a.sha256}`, 'HTML-Version widerspricht dem SHA-256-Wert.');
@@ -72,11 +72,15 @@ export function validateManifest(manifest, {previous = null, today = new Date().
     if (object(prior)) {
       const sameContent = prior.content_revision === revision && previous.artifact?.html_version === a.html_version;
       if (approval.status === 'withdrawn') {
+        require(JSON.stringify(c.source_review) === JSON.stringify(prior.source_review), prefix+'Rücknahme muss den bisherigen Quellenprüfnachweis bewahren.');
+        if (date(prior.approval?.decided_on) && date(approval.decided_on)) require(approval.decided_on >= prior.approval.decided_on, prefix+'Rücknahme liegt vor der vorherigen Entscheidung.');
         require(['approved','withdrawn'].includes(prior.approval?.status) && sameContent, prefix+'Rücknahme muss eine zuvor freigegebene, unveränderte Zuordnung betreffen.');
       }
-      if (approval.status === 'approved' && (!sameContent || prior.approval?.status !== 'approved')) {
-        require(JSON.stringify(prior.approval) !== JSON.stringify(approval), prefix+'Geänderter oder zurückgenommener Inhalt braucht eine neue Freigabeentscheidung.');
+      if (approval.status === 'approved' && (!sameContent || prior.approval?.status !== 'approved' || JSON.stringify(c.source_review) !== JSON.stringify(prior.source_review))) {
+        require(approval.evidence !== prior.approval?.evidence && text(approval.evidence), prefix+'Geänderter oder zurückgenommener Inhalt braucht eine neue Freigabeentscheidung.');
       }
+      if (date(prior.approval?.decided_on) && date(approval.decided_on)) require(approval.decided_on >= prior.approval.decided_on, prefix+'Entscheidungsdatum läuft rückwärts.');
+      if (Number.isSafeInteger(prior.content_revision)) require(revision !== null, prefix+'Bekannte Länderrevision darf nicht gelöscht werden.');
       if (Number.isSafeInteger(prior.content_revision) && Number.isSafeInteger(revision)) {
         require(revision >= prior.content_revision, prefix+'Länderrevision darf nicht rückwärts laufen.');
       }
