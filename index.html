@@ -26,12 +26,9 @@
     </form>
   </section>
 
-  <section id="portalView" hidden>
-    <header class="top">
-      <div class="brand">
-        <h1>Campions Club</h1>
-        <p>Deine Werkzeuge auf Wege & Ziele</p>
-      </div>
+  <section id="portalView" class="portal" hidden>
+    <header class="memberbar">
+      <a class="member-home" href="./" aria-label="Campions Club Startseite">Campions Club</a>
       <div class="userbox">
         <span id="userMail" class="small"></span>
         <a id="adminLink" class="btn btn-soft" href="./admin/" hidden>Verwaltung</a>
@@ -40,7 +37,20 @@
     </header>
 
     <div id="portalNotice"></div>
-    <section id="moduleGrid" class="modules" aria-live="polite"></section>
+    <section class="club-hero" aria-labelledby="clubTitle">
+      <p class="eyebrow">Unsere Camper-Community</p>
+      <img src="./assets/campions-club-logo.png" alt="Campions Club" id="clubTitle">
+      <p>Gemeinsam unterwegs, Erfahrungen austauschen und besondere Momente miteinander teilen.</p>
+    </section>
+
+    <section class="member-areas" aria-labelledby="memberAreasTitle">
+      <header class="section-heading">
+        <p class="eyebrow">Campions-Club</p>
+        <h1 id="memberAreasTitle">Unsere Mitgliederbereiche</h1>
+        <p>Wähle aus, welche Übersicht du öffnen möchtest.</p>
+      </header>
+      <section id="moduleGrid" class="modules" aria-live="polite"></section>
+    </section>
     <div class="footer">© 2026 · Helmut & Claudia · Campions Club</div>
   </section>
 </main>
@@ -61,6 +71,18 @@ const note = (el, text, ok=false) => {
   el.innerHTML = text ? '<div class="notice ' + (ok ? 'ok' : '') + '">' + text + '</div>' : '';
 };
 const statusLabel = s => s === "live" ? "Online" : s === "hidden" ? "Ausgeblendet" : "In Vorbereitung";
+
+const cardArtwork = slug => {
+  if (slug === "camping-car-park") return '<div class="module-art parks"><img src="./assets/camping-car-park-logo.png" alt="Camping-Car Park"></div>';
+  if (slug === "fuel-prices") return '<div class="module-art"><div class="wordmark fuel"><span class="wordmark-icon">⛽</span><strong>BENZINPREISE<small>IN EUROPA</small></strong></div></div>';
+  return '<div class="module-art"><div class="wordmark toll"><span class="toll-icon">▣</span><strong>MAUT &amp;<small>LÄNDERINFO</small></strong></div></div>';
+};
+
+const moduleSubtitle = slug => slug === "camping-car-park"
+  ? "Stellplatzdaten und Änderungen"
+  : slug === "fuel-prices"
+    ? "Aktuelle Preise und Vergleiche"
+    : "Regeln, Vignetten und Umweltzonen";
 
 async function showPortal(session){
   loginView.hidden = true;
@@ -96,7 +118,8 @@ async function showPortal(session){
 
     const card =
       '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
-      '<div><div class="icon">' + (m.icon || '•') + '</div><h2>' + m.name + '</h2><p>' + m.description + '</p></div>' +
+      cardArtwork(m.slug) +
+      '<div class="module-copy"><span class="round-arrow">→</span><div><h2>' + m.name + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">→</span></div>' +
       '<div class="meta"><span class="status ' + m.status + '">' + statusLabel(m.status) + '</span><span class="small">' + version + '</span></div>' +
       '</article>';
 
