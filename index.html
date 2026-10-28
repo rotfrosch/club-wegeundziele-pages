@@ -75,11 +75,9 @@ const note = (el, text, ok=false) => {
 };
 const cardArtwork = slug => {
   if (slug === "camping-car-park") return '<div class="module-art parks"><img src="./assets/camping-car-park-logo.png" alt="Camping-Car Park"></div>';
-  const symbol = slug === "fuel-prices"
-    ? '<svg viewBox="0 0 24 24" fill="none"><path d="M5 21V4.5A1.5 1.5 0 0 1 6.5 3h7A1.5 1.5 0 0 1 15 4.5V21M3 21h14M7.5 6h5v4h-5V6ZM15 7h2l2 2.2V17a2 2 0 0 0 4 0v-6.5l-2-2" stroke="currentColor" stroke-width="1.65" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-    : '<svg viewBox="0 0 92 82" fill="none"><path d="M14 70h64M21 70V33h29v37M18 33h35l-5-12H23l-5 12Z" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M30 43h12v11H30V43ZM50 42h30M78 42l8 8M80 42l6-7" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/><path d="M27 21v-7h18v7" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-  const fuel = slug === "fuel-prices";
-  return '<div class="module-art"><div class="wordmark ' + (fuel ? 'fuel' : 'toll') + '"><span class="wordmark-icon">' + symbol + '</span><span><strong>' + (fuel ? 'BENZINPREISE' : 'MAUT &amp;') + '</strong><b>' + (fuel ? 'IN EUROPA' : 'LÄNDERINFO') + '</b></span></div></div>';
+  const file = slug === "fuel-prices" ? "benzinpreise-original.png" : "maut-laenderinfo-original.png";
+  const alt = slug === "fuel-prices" ? "Benzinpreise in Europa" : "Maut & Länderinfo";
+  return '<div class="module-art graphic"><img src="./assets/' + file + '" alt="' + alt + '"></div>';
 };
 
 const arrowIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
@@ -87,10 +85,12 @@ const fuelIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path 
 const roadIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.5 21 10 3M15.5 21 14 3M12 5.5v3M12 12v3M12 18.5V21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>';
 
 const moduleSubtitle = slug => slug === "camping-car-park"
-  ? "Stellplatzdaten und Änderungen"
+  ? "771 Stellplätze · Datenstand 26.07.2026"
   : slug === "fuel-prices"
     ? "Aktuelle Preise und Vergleiche"
     : "Regeln, Vignetten und Umweltzonen";
+
+const moduleTitle = m => m.slug === "fuel-prices" ? "Benzinpreise in Europa" : m.name;
 
 async function showPortal(session){
   loginView.hidden = true;
@@ -119,7 +119,7 @@ async function showPortal(session){
     const card =
       '<article class="module ' + (clickable ? '' : 'disabled') + '">' +
       cardArtwork(m.slug) +
-      '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + m.name + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
+      '<div class="module-copy"><span class="round-arrow">' + cardIcon + '</span><div><h2>' + moduleTitle(m) + '</h2><p>' + moduleSubtitle(m.slug) + '</p></div><span class="card-arrow">' + arrowIcon + '</span></div>' +
       '</article>';
 
     return clickable ? '<a class="module-link" href=".' + m.path + '/">' + card + '</a>' : card;
