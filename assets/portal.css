@@ -10,3 +10,12 @@
 table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
 @media(max-width:980px){.modules{grid-template-columns:repeat(2,minmax(0,1fr))}.modules>:last-child{grid-column:1/-1}.club-hero{min-height:0}.member-areas{padding-block:48px 72px}}
 @media(max-width:640px){.memberbar{align-items:flex-start;flex-direction:column;padding-block:14px}.userbox{justify-content:flex-start}.userbox .small{width:100%}.club-hero{padding:38px 24px 42px}.club-hero img{width:100%;max-width:560px}.club-hero>p:last-child{font-size:1rem}.member-areas{width:min(calc(100% - 32px),700px);padding-block:42px 60px}.section-heading h1{font-size:clamp(2.7rem,13vw,4rem)}.modules{grid-template-columns:1fr}.modules>:last-child{grid-column:auto}.module-art{height:140px}}
+
+/* Login logo layout only; no changes to authentication behavior. */
+.login{width:min(650px,calc(100% - 32px));margin:clamp(24px,6vh,72px) auto;padding:clamp(24px,4vw,48px);border-radius:24px}
+.login-brand{display:flex;align-items:center;justify-content:center;margin:8px 0 42px}
+.login-logo{display:block;width:min(100%,540px);height:auto;object-fit:contain}
+.login label{font-size:1.1rem;margin:20px 0 9px}
+.login input{min-height:56px;border-radius:11px}
+.login .btn-primary,.login .btn-soft{min-height:52px;border-radius:12px}
+@media(max-width:640px){.login{padding:24px 20px}.login-brand{margin-bottom:24px}.login-logo{width:100%}}
