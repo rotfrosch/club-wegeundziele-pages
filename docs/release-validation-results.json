@@ -1,0 +1,53 @@
+{
+  "date": "2026-10-28",
+  "starting_remote_commit": "77822465ea33ad84f337dbdeb92ebdef7e0e3ce6",
+  "validated_implementation_commit": "9602ff20b81218527abacdb960bcb2226aa46641",
+  "manifest_tests": {
+    "passed": 28,
+    "failed": 0,
+    "skipped": 0
+  },
+  "manifest_validation": {
+    "draft_exit": 0,
+    "require_approved_exit": 2,
+    "ready": false
+  },
+  "browser_runs": [
+    {
+      "device": "Desktop",
+      "browser_regressions_passed": 18,
+      "profiles_passed": 126,
+      "details_passed": 882,
+      "expected_cases_passed": 14,
+      "status_tests_passed": 4,
+      "uncaught_browser_errors": 0
+    },
+    {
+      "device": "iPad (gen 7)",
+      "browser_regressions_passed": 18,
+      "profiles_passed": 126,
+      "details_passed": 882,
+      "expected_cases_passed": 14,
+      "status_tests_passed": 4,
+      "uncaught_browser_errors": 0
+    },
+    {
+      "device": "iPhone 13",
+      "browser_regressions_passed": 18,
+      "profiles_passed": 126,
+      "details_passed": 882,
+      "expected_cases_passed": 14,
+      "status_tests_passed": 4,
+      "uncaught_browser_errors": 0
+    }
+  ],
+  "runtime_application_files_changed": false,
+  "database_changes_executed": false,
+  "deployment_executed": false,
+  "open_countries": [
+    "HR",
+    "AT",
+    "IT",
+    "FR"
+  ]
+}
