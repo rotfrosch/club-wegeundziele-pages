@@ -26,7 +26,6 @@
       <input id="password" type="password" autocomplete="current-password" required>
       <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
         <button class="btn-primary" type="submit">Anmelden</button>
-        <button class="btn-soft" type="button" id="magicLink">Anmeldelink per E-Mail</button>
       </div>
     </form>
   </section>
@@ -71,7 +70,7 @@ try {
   ]).finally(() => clearTimeout(authTimer));
   if (!supabase || typeof supabase.from !== "function" ||
       typeof hasPermission !== "function" ||
-      !["getSession", "signInWithPassword", "signInWithOtp", "signOut"]
+      !["getSession", "signInWithPassword", "signOut"]
         .every(method => typeof supabase.auth?.[method] === "function")) {
     throw new Error("Invalid auth module");
   }
@@ -176,22 +175,6 @@ loginForm.addEventListener("submit", async e => {
     return;
   }
   showPortal(data.session);
-});
-
-document.querySelector("#magicLink").addEventListener("click", async () => {
-  const email = document.querySelector("#email").value.trim();
-  if (!email) {
-    note(loginNotice, "Bitte zuerst die E-Mail-Adresse eintragen.");
-    return;
-  }
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      shouldCreateUser: false,
-      emailRedirectTo: window.location.origin + window.location.pathname
-    }
-  });
-  note(loginNotice, error ? "Der Anmeldelink konnte nicht versendet werden." : "Anmeldelink wurde versendet.", !error);
 });
 
 document.querySelector("#logoutBtn").addEventListener("click", async () => {
