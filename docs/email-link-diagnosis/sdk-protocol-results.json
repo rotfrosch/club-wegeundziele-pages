@@ -1,0 +1,82 @@
+{
+  "started_at": "2026-10-29T00:05:12.947Z",
+  "real_auth_requests": 0,
+  "email_sent": false,
+  "cases": [
+    {
+      "device": "Desktop",
+      "response": "otp_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "Desktop",
+      "response": "email_provider_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "Desktop",
+      "response": "success",
+      "http_status": 200,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPad (gen 7)",
+      "response": "otp_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPad (gen 7)",
+      "response": "email_provider_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPad (gen 7)",
+      "response": "success",
+      "http_status": 200,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPhone 13",
+      "response": "otp_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPhone 13",
+      "response": "email_provider_disabled",
+      "http_status": 422,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    },
+    {
+      "device": "iPhone 13",
+      "response": "success",
+      "http_status": 200,
+      "status": "passed",
+      "create_user": false,
+      "redirect_matches_current_origin": true
+    }
+  ],
+  "finished_at": "2026-10-29T00:05:29.703Z",
+  "passed": 9,
+  "failed": 0
+}

@@ -1,0 +1,61 @@
+{
+  "task_date": "2026-10-29",
+  "project": "tsbqqffrjxmekdqjwdso",
+  "base_commit": "3cee14b0b960d18c15a716124ff20e2218cb1f1c",
+  "public_observations": {
+    "settings": {
+      "http_status": 200,
+      "external.email": true,
+      "disable_signup": true,
+      "mailer_autoconfirm": false
+    },
+    "health": {
+      "http_status": 200,
+      "version": "v2.197.0"
+    },
+    "live_html": {
+      "http_status": 200,
+      "matches_main": true,
+      "sha256": "034d2bccd46c0d559686d9aa6312ba23a768fe00e43ae1924fab7db657950741",
+      "shouldCreateUser": false
+    }
+  },
+  "provided_log_evidence": {
+    "source": "User-provided Supabase log findings; not independently read in this task",
+    "times": [
+      "2026-10-29 00:57 Europe/Berlin",
+      "2026-10-29 00:58 Europe/Berlin"
+    ],
+    "method": "POST",
+    "path": "/auth/v1/otp",
+    "status": 422,
+    "code": "otp_disabled",
+    "message": "Signups not allowed for otp"
+  },
+  "unavailable": [
+    "Raw authenticated auth logs and request body",
+    "Existing affected auth user, audience and confirmation status",
+    "Private MagicLinkEnabled configuration",
+    "Site URL and Redirect URL allowlist",
+    "SMTP configuration and live delivery"
+  ],
+  "no_production_mutations": true,
+  "no_real_otp_requests": true,
+  "tests": {
+    "login_passed": 69,
+    "sdk_protocol_passed": 9,
+    "failed": 0
+  },
+  "sources": [
+    "https://supabase.com/docs/guides/auth/auth-email-passwordless",
+    "https://supabase.com/docs/reference/javascript/auth-signinwithotp",
+    "https://supabase.com/docs/guides/auth/general-configuration",
+    "https://supabase.com/docs/guides/auth/redirect-urls",
+    "https://supabase.com/docs/guides/auth/auth-smtp",
+    "https://supabase.com/docs/guides/auth/debugging/error-codes",
+    "https://raw.githubusercontent.com/supabase/auth/v2.197.0/internal/api/otp.go",
+    "https://raw.githubusercontent.com/supabase/auth/v2.197.0/internal/api/magic_link.go",
+    "https://raw.githubusercontent.com/supabase/auth/v2.197.0/internal/models/user.go"
+  ],
+  "protocol_test_sha256": "f027fade34eb081aae66446ba474c9ad44088f9939700ca2b2a5ec00219c2b67"
+}

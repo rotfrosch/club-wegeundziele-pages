@@ -2,7 +2,8 @@
   "name": "campions-login-regression",
   "private": true,
   "scripts": {
-    "test": "node login-regression.cjs"
+    "test": "node login-regression.cjs",
+    "test:email-link": "node email-link-protocol.cjs"
   },
   "devDependencies": {
     "playwright": "1.58.2"
