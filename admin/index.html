@@ -30,7 +30,7 @@
       <div><p class="eyebrow">Club-Berechtigungen</p><h2 id="usersTitle">Benutzer</h2><p>Der Schalter verändert ausschließlich den Zugang zum Campions Club.</p></div>
       <button id="refreshUsers" class="btn-soft" type="button">Aktualisieren</button>
     </div>
-    <div class="table-scroll"><table class="user-table"><thead><tr><th>Benutzer</th><th>Status</th><th>Letzte Anmeldung</th><th>Club-Freigabe</th></tr></thead><tbody id="usersBody"><tr><td colspan="4">Benutzer werden geladen …</td></tr></tbody></table></div>
+    <div class="table-scroll"><table class="user-table"><thead><tr><th>Benutzer</th><th>Status</th><th>Letzte Anmeldung</th><th>Club-Freigabe</th><th>Aktion</th></tr></thead><tbody id="usersBody"><tr><td colspan="5">Benutzer werden geladen …</td></tr></tbody></table></div>
     <p class="small admin-hint">Homepage-Gruppen und Homepage-Rechte sind in dieser Verwaltung bewusst nicht verfügbar.</p>
   </section>
   <section class="panel admin-panel admin-status" aria-labelledby="statusTitle">
@@ -66,7 +66,10 @@ if (!isClubAdmin) {
     usersBody.innerHTML = users.map(user => {
       const lastSignIn = user.last_sign_in_at ? formatter.format(new Date(user.last_sign_in_at)) : "Noch nie";
       const status = user.is_active && user.email_confirmed ? "Aktiv" : (user.is_active ? "Unbestätigt" : "Inaktiv");
-      return '<tr data-user-id="' + escapeHtml(user.id) + '"><td><strong>' + escapeHtml(user.display_name || user.email) + '</strong><br><span class="small">' + escapeHtml(user.email) + '</span></td><td><span class="status ' + (status === "Aktiv" ? "live" : "") + '">' + status + '</span></td><td>' + escapeHtml(lastSignIn) + '</td><td><label class="permission-toggle"><input type="checkbox" ' + (user.club_enabled ? "checked" : "") + '><span>' + (user.club_enabled ? "Freigeschaltet" : "Gesperrt") + '</span></label></td></tr>';
+      const action = user.email_confirmed
+        ? '<span class="small">Zugang über Schalter entfernen</span>'
+        : (user.club_enabled ? '<button class="btn-danger delete-invitation" type="button" data-email="' + escapeHtml(user.email) + '">Einladung löschen</button>' : '<span class="small">Keine Club-Einladung</span>');
+      return '<tr data-user-id="' + escapeHtml(user.id) + '"><td><strong>' + escapeHtml(user.display_name || user.email) + '</strong><br><span class="small">' + escapeHtml(user.email) + '</span></td><td><span class="status ' + (status === "Aktiv" ? "live" : "") + '">' + status + '</span></td><td>' + escapeHtml(lastSignIn) + '</td><td><label class="permission-toggle"><input type="checkbox" ' + (user.club_enabled ? "checked" : "") + '><span>' + (user.club_enabled ? "Freigeschaltet" : "Gesperrt") + '</span></label></td><td>' + action + '</td></tr>';
     }).join("");
     usersBody.querySelectorAll(".permission-toggle input").forEach(input => input.addEventListener("change", async event => {
       const row = event.currentTarget.closest("tr");
@@ -83,11 +86,26 @@ if (!isClubAdmin) {
         showNotice(error.message);
       } finally { event.currentTarget.disabled = false; }
     }));
+    usersBody.querySelectorAll(".delete-invitation").forEach(button => button.addEventListener("click", async event => {
+      const row = event.currentTarget.closest("tr");
+      const email = event.currentTarget.dataset.email || "diese Adresse";
+      if (!confirm("Unbestätigte Einladung für " + email + " wirklich löschen?")) return;
+      event.currentTarget.disabled = true;
+      showNotice("Einladung wird gelöscht …", true);
+      try {
+        await callAdmin({ action:"delete_invitation", user_id:row.dataset.userId });
+        showNotice("Einladung für " + email + " wurde gelöscht.", true);
+        await loadUsers();
+      } catch (error) {
+        showNotice(error.message);
+        event.currentTarget.disabled = false;
+      }
+    }));
   }
   async function loadUsers() {
     refreshButton.disabled = true;
     try { const data = await callAdmin(); renderUsers(data.users || []); showNotice(""); }
-    catch (error) { usersBody.innerHTML = '<tr><td colspan="4">Benutzer konnten nicht geladen werden.</td></tr>'; showNotice(error.message); }
+    catch (error) { usersBody.innerHTML = '<tr><td colspan="5">Benutzer konnten nicht geladen werden.</td></tr>'; showNotice(error.message); }
     finally { refreshButton.disabled = false; }
   }
   refreshButton.addEventListener("click", loadUsers);
