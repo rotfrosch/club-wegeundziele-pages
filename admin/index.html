@@ -7,60 +7,87 @@
 <link rel="stylesheet" href="../assets/portal.css">
 </head>
 <body>
-<main class="shell">
-  <header class="top">
+<main class="shell admin-shell">
+  <header class="admin-top">
     <div class="brand">
-      <h1>Club-Verwaltung</h1>
-      <p>Technischer Veröffentlichungsstand</p>
+      <p class="eyebrow">Campions Club</p>
+      <h1>Benutzerverwaltung</h1>
+      <p>Club-Zugänge verwalten – vollständig getrennt von der Homepage.</p>
     </div>
-    <div class="userbox">
-      <a class="btn btn-soft" href="../">← Portal</a>
-    </div>
+    <div class="userbox"><span id="adminMail" class="small"></span><a class="btn btn-soft" href="../">← Portal</a></div>
   </header>
-
-  <section class="panel">
-    <h2 style="margin-top:0">Maut & Länderinfo</h2>
-    <div id="versionBox"></div>
-
-    <h3>Länderstatus</h3>
-    <div style="overflow:auto">
-      <table>
-        <thead><tr><th>Land</th><th>Status</th><th>Geprüft</th><th>Revision</th></tr></thead>
-        <tbody id="countries"></tbody>
-      </table>
+  <div id="adminNotice" aria-live="polite"></div>
+  <section class="panel admin-panel" aria-labelledby="usersTitle">
+    <div class="admin-section-head">
+      <div><p class="eyebrow">Club-Berechtigungen</p><h2 id="usersTitle">Benutzer</h2><p>Der Schalter verändert ausschließlich den Zugang zum Campions Club.</p></div>
+      <button id="refreshUsers" class="btn-soft" type="button">Aktualisieren</button>
     </div>
-
-    <p class="small">Dieser Bereich ist zunächst bewusst nur lesend. Veröffentlichung und redaktionelle Bearbeitung kommen im nächsten Schritt.</p>
+    <div class="table-scroll"><table class="user-table"><thead><tr><th>Benutzer</th><th>Status</th><th>Letzte Anmeldung</th><th>Club-Freigabe</th></tr></thead><tbody id="usersBody"><tr><td colspan="4">Benutzer werden geladen …</td></tr></tbody></table></div>
+    <p class="small admin-hint">Homepage-Gruppen und Homepage-Rechte sind in dieser Verwaltung bewusst nicht verfügbar.</p>
+  </section>
+  <section class="panel admin-panel admin-status" aria-labelledby="statusTitle">
+    <div class="admin-section-head"><div><p class="eyebrow">Technischer Stand</p><h2 id="statusTitle">Maut & Länderinfo</h2></div></div>
+    <div id="versionBox"></div>
+    <details><summary>Länderstatus anzeigen</summary><div class="table-scroll"><table><thead><tr><th>Land</th><th>Status</th><th>Geprüft</th><th>Revision</th></tr></thead><tbody id="countries"></tbody></table></div></details>
   </section>
 </main>
-
 <script type="module">
 import { supabase, getSession, hasPermission } from "../assets/auth.js";
 
 const session = await getSession();
-if (!session || !(await hasPermission("admin:manage").catch(() => false))) {
+const isClubAdmin = session && await hasPermission("club:admin").catch(() => false);
+if (!isClubAdmin) {
   location.replace("../");
 } else {
-  const { data: s } = await supabase
-    .from("countrycheck_settings")
-    .select("online_version,development_version,release_notes,published_at")
-    .eq("app_key","countrycheck")
-    .single();
-
-  document.querySelector("#versionBox").innerHTML =
-    '<div class="notice ok"><b>Online:</b> ' + s.online_version +
-    '<br><b>Entwicklung:</b> ' + s.development_version +
-    '<br><b>Stand:</b> ' + s.release_notes + '</div>';
-
-  const { data: c } = await supabase
-    .from("countrycheck_countries")
-    .select("iso_code,country_name,flag,publish_status,last_checked,content_revision")
-    .order("country_name");
-
-  document.querySelector("#countries").innerHTML = (c || []).map(x =>
-    '<tr><td>' + x.flag + ' ' + x.country_name + '</td><td>' + x.publish_status +
-    '</td><td>' + (x.last_checked || '—') + '</td><td>' + x.content_revision + '</td></tr>'
-  ).join("");
+  document.querySelector("#adminMail").textContent = session.user.email || "";
+  const notice = document.querySelector("#adminNotice");
+  const usersBody = document.querySelector("#usersBody");
+  const refreshButton = document.querySelector("#refreshUsers");
+  const formatter = new Intl.DateTimeFormat("de-DE", {dateStyle:"medium", timeStyle:"short"});
+  const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
+  const showNotice = (text, ok=false) => notice.innerHTML = text ? '<div class="notice ' + (ok ? "ok" : "") + '">' + escapeHtml(text) + '</div>' : "";
+  async function callAdmin(body = { action:"list_users" }) {
+    const { data, error } = await supabase.functions.invoke("club-user-admin", { body });
+    if (error) throw new Error(error.message || "Die Club-Verwaltung ist nicht erreichbar.");
+    if (data?.error) throw new Error(data.error);
+    return data;
+  }
+  function renderUsers(users) {
+    usersBody.innerHTML = users.map(user => {
+      const lastSignIn = user.last_sign_in_at ? formatter.format(new Date(user.last_sign_in_at)) : "Noch nie";
+      const status = user.is_active && user.email_confirmed ? "Aktiv" : (user.is_active ? "Unbestätigt" : "Inaktiv");
+      return '<tr data-user-id="' + escapeHtml(user.id) + '"><td><strong>' + escapeHtml(user.display_name || user.email) + '</strong><br><span class="small">' + escapeHtml(user.email) + '</span></td><td><span class="status ' + (status === "Aktiv" ? "live" : "") + '">' + status + '</span></td><td>' + escapeHtml(lastSignIn) + '</td><td><label class="permission-toggle"><input type="checkbox" ' + (user.club_enabled ? "checked" : "") + '><span>' + (user.club_enabled ? "Freigeschaltet" : "Gesperrt") + '</span></label></td></tr>';
+    }).join("");
+    usersBody.querySelectorAll(".permission-toggle input").forEach(input => input.addEventListener("change", async event => {
+      const row = event.currentTarget.closest("tr");
+      const label = event.currentTarget.nextElementSibling;
+      const enabled = event.currentTarget.checked;
+      event.currentTarget.disabled = true;
+      showNotice("Club-Freigabe wird gespeichert …", true);
+      try {
+        await callAdmin({ action:"set_membership", user_id:row.dataset.userId, enabled });
+        label.textContent = enabled ? "Freigeschaltet" : "Gesperrt";
+        showNotice("Club-Freigabe wurde gespeichert.", true);
+      } catch (error) {
+        event.currentTarget.checked = !enabled;
+        showNotice(error.message);
+      } finally { event.currentTarget.disabled = false; }
+    }));
+  }
+  async function loadUsers() {
+    refreshButton.disabled = true;
+    try { const data = await callAdmin(); renderUsers(data.users || []); showNotice(""); }
+    catch (error) { usersBody.innerHTML = '<tr><td colspan="4">Benutzer konnten nicht geladen werden.</td></tr>'; showNotice(error.message); }
+    finally { refreshButton.disabled = false; }
+  }
+  refreshButton.addEventListener("click", loadUsers);
+  await loadUsers();
+  const [{ data: settings }, { data: countries }] = await Promise.all([
+    supabase.from("countrycheck_settings").select("online_version,development_version,release_notes,published_at").eq("app_key","countrycheck").single(),
+    supabase.from("countrycheck_countries").select("iso_code,country_name,flag,publish_status,last_checked,content_revision").order("country_name")
+  ]);
+  if (settings) document.querySelector("#versionBox").innerHTML = '<div class="notice ok"><b>Online:</b> ' + escapeHtml(settings.online_version) + '<br><b>Entwicklung:</b> ' + escapeHtml(settings.development_version) + '<br><b>Stand:</b> ' + escapeHtml(settings.release_notes) + '</div>';
+  document.querySelector("#countries").innerHTML = (countries || []).map(x => '<tr><td>' + escapeHtml(x.flag) + ' ' + escapeHtml(x.country_name) + '</td><td>' + escapeHtml(x.publish_status) + '</td><td>' + escapeHtml(x.last_checked || "—") + '</td><td>' + escapeHtml(x.content_revision) + '</td></tr>').join("");
 }
 </script>
 </body>

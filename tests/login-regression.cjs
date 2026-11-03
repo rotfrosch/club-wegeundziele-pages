@@ -15,14 +15,15 @@ function authSource(cfg) {
 calls.push=function(...items){Array.prototype.push.apply(this,items);sessionStorage.setItem("test-auth-calls",JSON.stringify(this));return this.length;};
 const session={user:{email:'member@example.invalid'}};
 export async function getSession(){return cfg.session?session:null;}
-export async function hasPermission(key){calls.push({op:'permission',key});if(cfg.permissionError)throw Error('test API unavailable');return key==='admin:manage'?!!cfg.admin:!cfg.denied;}
+export async function hasPermission(key){calls.push({op:'permission',key});if(cfg.permissionError)throw Error('test API unavailable');return key==='club:admin'?!!cfg.admin:!cfg.denied;}
 export const supabase={
  auth:{
   getSession:async()=>{if(cfg.sessionThrow)throw Error('test session rejected');return {data:{session:cfg.session?session:null},error:cfg.sessionError?{message:'test session failure'}:null}},
   signOut:async()=>{calls.push({op:'signOut'});return {error:null}},
   signInWithPassword:async args=>{calls.push({op:'password',email:args.email});return {data:{session},error:cfg.passwordError?{message:'test invalid credentials'}:null}}
  },
- rpc:async(name,args)=>{calls.push({op:'rpc',name,args});return {data:cfg.rpcNonBoolean?'true':(args.requested_key==='admin:manage'?!!cfg.admin:!cfg.denied),error:cfg.permissionError?{message:'test RPC failure'}:null}},
+ functions:{invoke:async(name,options={})=>{calls.push({op:'function',name,body:options.body});return cfg.functionError?{data:null,error:{message:'test function failure'}}:{data:options.body?.action==='set_membership'?{ok:true}:{users:[{id:'user-1',email:'member@example.invalid',display_name:'Testmitglied',is_active:true,email_confirmed:true,last_sign_in_at:'2026-11-01T12:00:00Z',club_enabled:!!cfg.clubEnabled}]},error:null};}},
+ rpc:async(name,args)=>{calls.push({op:'rpc',name,args});return {data:cfg.rpcNonBoolean?'true':(args.requested_key==='club:admin'?!!cfg.admin:!cfg.denied),error:cfg.permissionError?{message:'test RPC failure'}:null}},
  from(table){calls.push({op:'from',table});const response=table==='club_modules'?{data:[{slug:'countrycheck',name:'Maut & Länderinfo',path:'/maut-laenderinfo',status:'live'}],error:null}:table==='countrycheck_countries'?{data:[],error:null}:{data:{online_version:'V65',development_version:'test',release_notes:'fixture'},error:null};const q=new Proxy({},{get(_,key){if(key==='then')return resolve=>Promise.resolve(response).then(resolve);return ()=>q;}});return q;}
 };
 export function createClient(){return supabase;}`;
@@ -95,7 +96,14 @@ async function runDevice(device){
   await check(name,device,()=>withPage(device,{...cfg,session:true,realHelper:true},async p=>{
    if(allowed)await p.locator('#versionBox .notice').waitFor();else {await p.waitForURL(base+'/');await p.waitForTimeout(100);}
    const evidence=await p.evaluate(async()=>{const sdk=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');return sdk.calls;});
-   assert.ok(evidence.some(x=>x.op==='rpc'&&x.name==='current_user_has_permission'&&x.args.requested_key==='admin:manage'));
+   assert.ok(evidence.some(x=>x.op==='rpc'&&x.name==='current_user_has_permission'&&x.args.requested_key==='club:admin'));
+   if(allowed){
+    await p.getByRole('checkbox').waitFor();
+    assert.ok(evidence.some(x=>x.op==='function'&&x.name==='club-user-admin'));
+    await p.getByRole('checkbox').click();
+    const changed=await p.evaluate(async()=>{const sdk=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');return sdk.calls;});
+    assert.ok(changed.some(x=>x.op==='function'&&x.name==='club-user-admin'&&x.body?.action==='set_membership'&&x.body?.user_id==='user-1'));
+   }
    if(!allowed)assert.equal(evidence.some(x=>x.op==='from'&&x.table==='countrycheck_countries'),false);
   },'/admin/'), 'authorization-boundary');
  }
