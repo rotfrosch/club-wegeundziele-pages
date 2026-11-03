@@ -22,7 +22,7 @@ export const supabase={
   signOut:async()=>{calls.push({op:'signOut'});return {error:null}},
   signInWithPassword:async args=>{calls.push({op:'password',email:args.email});return {data:{session},error:cfg.passwordError?{message:'test invalid credentials'}:null}}
  },
- functions:{invoke:async(name,options={})=>{calls.push({op:'function',name,body:options.body});return cfg.functionError?{data:null,error:{message:'test function failure'}}:{data:options.body?.action==='set_membership'?{ok:true}:{users:[{id:'user-1',email:'member@example.invalid',display_name:'Testmitglied',is_active:true,email_confirmed:true,last_sign_in_at:'2026-11-01T12:00:00Z',club_enabled:!!cfg.clubEnabled}]},error:null};}},
+ functions:{invoke:async(name,options={})=>{calls.push({op:'function',name,body:options.body});return cfg.functionError?{data:null,error:{message:'test function failure'}}:{data:['set_membership','invite_user'].includes(options.body?.action)?{ok:true}:{users:[{id:'user-1',email:'member@example.invalid',display_name:'Testmitglied',is_active:true,email_confirmed:true,last_sign_in_at:'2026-11-01T12:00:00Z',club_enabled:!!cfg.clubEnabled}]},error:null};}},
  rpc:async(name,args)=>{calls.push({op:'rpc',name,args});return {data:cfg.rpcNonBoolean?'true':(args.requested_key==='club:admin'?!!cfg.admin:!cfg.denied),error:cfg.permissionError?{message:'test RPC failure'}:null}},
  from(table){calls.push({op:'from',table});const response=table==='club_modules'?{data:[{slug:'countrycheck',name:'Maut & Länderinfo',path:'/maut-laenderinfo',status:'live'}],error:null}:table==='countrycheck_countries'?{data:[],error:null}:{data:{online_version:'V65',development_version:'test',release_notes:'fixture'},error:null};const q=new Proxy({},{get(_,key){if(key==='then')return resolve=>Promise.resolve(response).then(resolve);return ()=>q;}});return q;}
 };
@@ -103,6 +103,10 @@ async function runDevice(device){
     await p.getByRole('checkbox').click();
     const changed=await p.evaluate(async()=>{const sdk=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');return sdk.calls;});
     assert.ok(changed.some(x=>x.op==='function'&&x.name==='club-user-admin'&&x.body?.action==='set_membership'&&x.body?.user_id==='user-1'));
+    await p.getByLabel('E-Mail-Adresse').fill('invitee@example.invalid');
+    await p.getByRole('button',{name:'Einladung senden'}).click();
+    const invited=await p.evaluate(async()=>{const sdk=await import('https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/+esm');return sdk.calls;});
+    assert.ok(invited.some(x=>x.op==='function'&&x.name==='club-user-admin'&&x.body?.action==='invite_user'&&x.body?.email==='invitee@example.invalid'));
    }
    if(!allowed)assert.equal(evidence.some(x=>x.op==='from'&&x.table==='countrycheck_countries'),false);
   },'/admin/'), 'authorization-boundary');

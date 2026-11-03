@@ -17,6 +17,14 @@
     <div class="userbox"><span id="adminMail" class="small"></span><a class="btn btn-soft" href="../">← Portal</a></div>
   </header>
   <div id="adminNotice" aria-live="polite"></div>
+  <section class="panel admin-panel invite-panel" aria-labelledby="inviteTitle">
+    <div><p class="eyebrow">Neues Mitglied</p><h2 id="inviteTitle">Mitglied einladen</h2><p>Das Mitglied erhält eine E-Mail und richtet anschließend sein eigenes Passwort ein.</p></div>
+    <form id="inviteForm" class="invite-form">
+      <label for="inviteEmail">E-Mail-Adresse</label>
+      <div class="invite-row"><input id="inviteEmail" name="email" type="email" autocomplete="email" required placeholder="name@beispiel.de"><button id="inviteButton" class="btn-primary" type="submit">Einladung senden</button></div>
+    </form>
+    <p class="small admin-hint">Die Einladung vergibt ausschließlich den Club-Zugang. Homepage-Rechte bleiben unverändert.</p>
+  </section>
   <section class="panel admin-panel" aria-labelledby="usersTitle">
     <div class="admin-section-head">
       <div><p class="eyebrow">Club-Berechtigungen</p><h2 id="usersTitle">Benutzer</h2><p>Der Schalter verändert ausschließlich den Zugang zum Campions Club.</p></div>
@@ -43,6 +51,8 @@ if (!isClubAdmin) {
   const notice = document.querySelector("#adminNotice");
   const usersBody = document.querySelector("#usersBody");
   const refreshButton = document.querySelector("#refreshUsers");
+  const inviteForm = document.querySelector("#inviteForm");
+  const inviteButton = document.querySelector("#inviteButton");
   const formatter = new Intl.DateTimeFormat("de-DE", {dateStyle:"medium", timeStyle:"short"});
   const escapeHtml = value => String(value ?? "").replace(/[&<>'"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[c]);
   const showNotice = (text, ok=false) => notice.innerHTML = text ? '<div class="notice ' + (ok ? "ok" : "") + '">' + escapeHtml(text) + '</div>' : "";
@@ -81,6 +91,19 @@ if (!isClubAdmin) {
     finally { refreshButton.disabled = false; }
   }
   refreshButton.addEventListener("click", loadUsers);
+  inviteForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const email = String(new FormData(inviteForm).get("email") || "").trim();
+    inviteButton.disabled = true;
+    showNotice("Einladung wird versendet …", true);
+    try {
+      await callAdmin({ action:"invite_user", email });
+      inviteForm.reset();
+      showNotice("Einladung wurde an " + email + " versendet.", true);
+      await loadUsers();
+    } catch (error) { showNotice(error.message); }
+    finally { inviteButton.disabled = false; }
+  });
   await loadUsers();
   const [{ data: settings }, { data: countries }] = await Promise.all([
     supabase.from("countrycheck_settings").select("online_version,development_version,release_notes,published_at").eq("app_key","countrycheck").single(),

@@ -52,10 +52,34 @@ Deno.serve(async (request: Request) => {
   if (groupError || !group) return json({ error: "Club-Gruppe nicht gefunden." }, 500);
 
   if (request.method === "POST") {
-    let body: { action?: unknown; user_id?: unknown; enabled?: unknown };
+    let body: { action?: unknown; user_id?: unknown; enabled?: unknown; email?: unknown };
     try { body = await request.json(); } catch { return json({ error: "Ungültige Anfrage." }, 400); }
     if (body.action === "list_users") {
       // Continue below with the read-only user list.
+    } else if (body.action === "invite_user") {
+      const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
+        return json({ error: "Bitte eine gültige E-Mail-Adresse eingeben." }, 400);
+      }
+      const { data: invited, error: inviteError } = await admin.auth.admin.inviteUserByEmail(email, {
+        redirectTo: "https://club.wegeundziele.de/einladung/",
+      });
+      if (inviteError || !invited.user) {
+        const existing = inviteError?.message?.toLowerCase().includes("already") || inviteError?.status === 422;
+        return json({ error: existing ? "Dieser Benutzer ist bereits angelegt. Bitte den Club-Schalter in der Tabelle verwenden." : "Die Einladung konnte nicht versendet werden." }, 400);
+      }
+      const membership = await admin.from("group_members").upsert(
+        { user_id: invited.user.id, group_id: group.id },
+        { onConflict: "user_id,group_id" },
+      );
+      if (membership.error) return json({ error: "Einladung versendet, Club-Freigabe konnte nicht gespeichert werden." }, 500);
+      const { error: auditError } = await admin.from("club_membership_audit").insert({
+        target_user_id: invited.user.id,
+        changed_by: authData.user.id,
+        enabled: true,
+      });
+      if (auditError) return json({ error: "Einladung versendet, Protokollierung fehlgeschlagen." }, 500);
+      return json({ ok: true });
     } else if (body.action !== "set_membership" || typeof body.user_id !== "string" || typeof body.enabled !== "boolean") {
       return json({ error: "Ungültige Anfrage." }, 400);
     } else {

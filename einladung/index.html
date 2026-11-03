@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Einladung annehmen · Campions Club</title>
+<link rel="stylesheet" href="../assets/portal.css">
+</head>
+<body>
+<main class="login-wrap">
+  <section class="panel login">
+    <div class="login-brand"><img class="login-logo" src="../assets/campions-club-logo.png" alt="Campions Club"></div>
+    <h1>Einladung annehmen</h1>
+    <p>Bitte legen Sie ein persönliches Passwort für Ihren Club-Zugang fest.</p>
+    <div id="inviteNotice" aria-live="polite"></div>
+    <form id="passwordForm" hidden>
+      <label for="password">Neues Passwort</label>
+      <input id="password" name="password" type="password" autocomplete="new-password" minlength="10" required>
+      <label for="passwordRepeat">Passwort wiederholen</label>
+      <input id="passwordRepeat" name="passwordRepeat" type="password" autocomplete="new-password" minlength="10" required>
+      <button class="btn-primary" type="submit">Passwort speichern</button>
+    </form>
+  </section>
+</main>
+<script type="module">
+import { supabase } from "../assets/auth.js";
+const form = document.querySelector("#passwordForm");
+const notice = document.querySelector("#inviteNotice");
+const show = (text, ok=false) => { notice.className = "notice " + (ok ? "ok" : ""); notice.textContent = text; };
+const { data: { session } } = await supabase.auth.getSession();
+if (!session) show("Der Einladungslink ist ungültig oder abgelaufen. Bitte fordern Sie eine neue Einladung an.");
+else form.hidden = false;
+form.addEventListener("submit", async event => {
+  event.preventDefault();
+  const data = new FormData(form);
+  const password = data.get("password");
+  if (password !== data.get("passwordRepeat")) return show("Die beiden Passwörter stimmen nicht überein.");
+  const button = form.querySelector("button");
+  button.disabled = true;
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) { show(error.message || "Das Passwort konnte nicht gespeichert werden."); button.disabled = false; return; }
+  show("Ihr Club-Zugang ist eingerichtet. Sie werden weitergeleitet.", true);
+  setTimeout(() => location.replace("../"), 1200);
+});
+</script>
+</body>
+</html>
