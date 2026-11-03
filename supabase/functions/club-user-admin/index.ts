@@ -111,7 +111,8 @@ Deno.serve(async (request: Request) => {
         const related = row.app_groups as unknown as { slug?: string } | Array<{ slug?: string }> | null;
         return Array.isArray(related) ? related[0]?.slug : related?.slug;
       }).filter(Boolean);
-      const hasNonClubRights = groupSlugs.some(slug => slug !== "club-member") || (directPermissionCount || 0) > 0;
+      const clubOnlyGroups = new Set(["club-member", "campions-club"]);
+      const hasNonClubRights = groupSlugs.some(slug => !clubOnlyGroups.has(slug as string)) || (directPermissionCount || 0) > 0;
       if (hasNonClubRights || (auditCount || 0) === 0) {
         return json({ error: "Dieser Benutzer besitzt weitere zentrale oder Homepage-Rechte und kann hier nicht vollständig gelöscht werden." }, 409);
       }
@@ -171,7 +172,7 @@ Deno.serve(async (request: Request) => {
   const users = authUsers.map(user => {
     const profile = profileMap.get(user.id);
     const groupSlugs = groupsByUser.get(user.id) || new Set<string>();
-    const hasNonClubRights = [...groupSlugs].some(slug => slug !== "club-member") || usersWithDirectPermissions.has(user.id);
+    const hasNonClubRights = [...groupSlugs].some(slug => !["club-member", "campions-club"].includes(slug)) || usersWithDirectPermissions.has(user.id);
     const canDeleteUser = user.id !== authData.user.id && Boolean(user.email_confirmed_at) && auditedClubUsers.has(user.id) && !hasNonClubRights;
     return {
       id: user.id,
