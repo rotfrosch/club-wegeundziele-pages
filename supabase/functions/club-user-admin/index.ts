@@ -95,6 +95,29 @@ Deno.serve(async (request: Request) => {
       const { error: deleteError } = await admin.auth.admin.deleteUser(target.user.id);
       if (deleteError) return json({ error: "Die Einladung konnte nicht gelöscht werden." }, 500);
       return json({ ok: true });
+    } else if (body.action === "delete_user") {
+      if (typeof body.user_id !== "string") return json({ error: "Ungültige Anfrage." }, 400);
+      if (body.user_id === authData.user.id) return json({ error: "Das eigene Konto kann nicht gelöscht werden." }, 409);
+      const { data: target, error: targetError } = await admin.auth.admin.getUserById(body.user_id);
+      if (targetError || !target.user) return json({ error: "Benutzer nicht gefunden." }, 404);
+      if (!target.user.email_confirmed_at) return json({ error: "Unbestätigte Konten bitte als Einladung löschen." }, 409);
+      const [{ data: memberships, error: membershipsError }, { count: directPermissionCount, error: directPermissionsError }, { count: auditCount, error: auditError }] = await Promise.all([
+        admin.from("group_members").select("app_groups!inner(slug)").eq("user_id", target.user.id),
+        admin.from("user_permissions").select("user_id", { count: "exact", head: true }).eq("user_id", target.user.id),
+        admin.from("club_membership_audit").select("target_user_id", { count: "exact", head: true }).eq("target_user_id", target.user.id),
+      ]);
+      if (membershipsError || directPermissionsError || auditError) return json({ error: "Zentrale Rechte konnten nicht geprüft werden." }, 500);
+      const groupSlugs = (memberships || []).map(row => {
+        const related = row.app_groups as unknown as { slug?: string } | Array<{ slug?: string }> | null;
+        return Array.isArray(related) ? related[0]?.slug : related?.slug;
+      }).filter(Boolean);
+      const hasNonClubRights = groupSlugs.some(slug => slug !== "club-member") || (directPermissionCount || 0) > 0;
+      if (hasNonClubRights || (auditCount || 0) === 0) {
+        return json({ error: "Dieser Benutzer besitzt weitere zentrale oder Homepage-Rechte und kann hier nicht vollständig gelöscht werden." }, 409);
+      }
+      const { error: deleteError } = await admin.auth.admin.deleteUser(target.user.id);
+      if (deleteError) return json({ error: "Der Benutzer konnte nicht vollständig gelöscht werden." }, 500);
+      return json({ ok: true });
     } else if (body.action !== "set_membership" || typeof body.user_id !== "string" || typeof body.enabled !== "boolean") {
       return json({ error: "Ungültige Anfrage." }, 400);
     } else {
@@ -125,15 +148,31 @@ Deno.serve(async (request: Request) => {
     if (data.users.length < 100) break;
   }
   const ids = authUsers.map(user => user.id);
-  const [{ data: profiles, error: profileError }, { data: memberships, error: membershipError }] = await Promise.all([
+  const [{ data: profiles, error: profileError }, { data: memberships, error: membershipError }, { data: allMemberships, error: allMembershipsError }, { data: directPermissions, error: directPermissionsError }, { data: auditRows, error: auditRowsError }] = await Promise.all([
     ids.length ? admin.from("profiles").select("id,display_name,is_active").in("id", ids) : Promise.resolve({ data: [], error: null }),
     ids.length ? admin.from("group_members").select("user_id").eq("group_id", group.id).in("user_id", ids) : Promise.resolve({ data: [], error: null }),
+    ids.length ? admin.from("group_members").select("user_id,app_groups!inner(slug)").in("user_id", ids) : Promise.resolve({ data: [], error: null }),
+    ids.length ? admin.from("user_permissions").select("user_id").in("user_id", ids) : Promise.resolve({ data: [], error: null }),
+    ids.length ? admin.from("club_membership_audit").select("target_user_id").in("target_user_id", ids) : Promise.resolve({ data: [], error: null }),
   ]);
-  if (profileError || membershipError) return json({ error: "Berechtigungen konnten nicht geladen werden." }, 500);
+  if (profileError || membershipError || allMembershipsError || directPermissionsError || auditRowsError) return json({ error: "Berechtigungen konnten nicht geladen werden." }, 500);
   const profileMap = new Map((profiles || []).map(profile => [profile.id, profile]));
   const clubMembers = new Set((memberships || []).map(row => row.user_id));
+  const groupsByUser = new Map<string, Set<string>>();
+  for (const row of allMemberships || []) {
+    const related = row.app_groups as unknown as { slug?: string } | Array<{ slug?: string }> | null;
+    const slug = Array.isArray(related) ? related[0]?.slug : related?.slug;
+    if (!slug) continue;
+    if (!groupsByUser.has(row.user_id)) groupsByUser.set(row.user_id, new Set());
+    groupsByUser.get(row.user_id)?.add(slug);
+  }
+  const usersWithDirectPermissions = new Set((directPermissions || []).map(row => row.user_id));
+  const auditedClubUsers = new Set((auditRows || []).map(row => row.target_user_id));
   const users = authUsers.map(user => {
     const profile = profileMap.get(user.id);
+    const groupSlugs = groupsByUser.get(user.id) || new Set<string>();
+    const hasNonClubRights = [...groupSlugs].some(slug => slug !== "club-member") || usersWithDirectPermissions.has(user.id);
+    const canDeleteUser = user.id !== authData.user.id && Boolean(user.email_confirmed_at) && auditedClubUsers.has(user.id) && !hasNonClubRights;
     return {
       id: user.id,
       email: user.email || "",
@@ -142,6 +181,8 @@ Deno.serve(async (request: Request) => {
       email_confirmed: Boolean(user.email_confirmed_at),
       last_sign_in_at: user.last_sign_in_at,
       club_enabled: clubMembers.has(user.id),
+      can_delete_user: canDeleteUser,
+      delete_block_reason: user.id === authData.user.id ? "Eigenes Konto geschützt" : (hasNonClubRights ? "Weitere zentrale Rechte vorhanden" : "Kein ausschließliches Club-Konto"),
     };
   }).sort((a, b) => a.email.localeCompare(b.email, "de"));
   return json({ users });
