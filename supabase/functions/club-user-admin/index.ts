@@ -80,6 +80,21 @@ Deno.serve(async (request: Request) => {
       });
       if (auditError) return json({ error: "Einladung versendet, Protokollierung fehlgeschlagen." }, 500);
       return json({ ok: true });
+    } else if (body.action === "delete_invitation") {
+      if (typeof body.user_id !== "string") return json({ error: "Ungültige Anfrage." }, 400);
+      const { data: target, error: targetError } = await admin.auth.admin.getUserById(body.user_id);
+      if (targetError || !target.user) return json({ error: "Einladung nicht gefunden." }, 404);
+      if (target.user.email_confirmed_at) {
+        return json({ error: "Bestätigte Benutzer werden nicht gelöscht. Bitte stattdessen den Club-Zugang entfernen." }, 409);
+      }
+      if (target.user.id === authData.user.id) return json({ error: "Das eigene Konto kann nicht gelöscht werden." }, 409);
+      const { data: membership, error: membershipError } = await admin.from("group_members")
+        .select("user_id").eq("user_id", target.user.id).eq("group_id", group.id).maybeSingle();
+      if (membershipError) return json({ error: "Club-Zuordnung konnte nicht geprüft werden." }, 500);
+      if (!membership) return json({ error: "Nur Einladungen aus der Club-Verwaltung können hier gelöscht werden." }, 409);
+      const { error: deleteError } = await admin.auth.admin.deleteUser(target.user.id);
+      if (deleteError) return json({ error: "Die Einladung konnte nicht gelöscht werden." }, 500);
+      return json({ ok: true });
     } else if (body.action !== "set_membership" || typeof body.user_id !== "string" || typeof body.enabled !== "boolean") {
       return json({ error: "Ungültige Anfrage." }, 400);
     } else {
