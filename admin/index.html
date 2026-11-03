@@ -67,7 +67,7 @@ if (!isClubAdmin) {
       const lastSignIn = user.last_sign_in_at ? formatter.format(new Date(user.last_sign_in_at)) : "Noch nie";
       const status = user.is_active && user.email_confirmed ? "Aktiv" : (user.is_active ? "Unbestätigt" : "Inaktiv");
       const action = user.email_confirmed
-        ? (user.can_delete_user ? '<button class="btn-danger delete-user" type="button" data-email="' + escapeHtml(user.email) + '">Benutzer löschen</button>' : '<span class="small">' + escapeHtml(user.delete_block_reason || "Nur Club-Zugang entfernbar") + '</span>')
+        ? (user.can_delete_user ? '<div class="user-action">' + (!user.club_enabled ? '<span class="small">Kein ausschließliches Club-Konto</span>' : '') + '<button class="btn-danger delete-user" type="button" data-email="' + escapeHtml(user.email) + '">Benutzer löschen</button></div>' : '<span class="small">' + escapeHtml(user.delete_block_reason || "Nur Club-Zugang entfernbar") + '</span>')
         : (user.club_enabled ? '<button class="btn-danger delete-invitation" type="button" data-email="' + escapeHtml(user.email) + '">Einladung löschen</button>' : '<span class="small">Keine Club-Einladung</span>');
       return '<tr data-user-id="' + escapeHtml(user.id) + '"><td><strong>' + escapeHtml(user.display_name || user.email) + '</strong><br><span class="small">' + escapeHtml(user.email) + '</span></td><td><span class="status ' + (status === "Aktiv" ? "live" : "") + '">' + status + '</span></td><td>' + escapeHtml(lastSignIn) + '</td><td><label class="permission-toggle"><input type="checkbox" ' + (user.club_enabled ? "checked" : "") + '><span>' + (user.club_enabled ? "Freigeschaltet" : "Gesperrt") + '</span></label></td><td>' + action + '</td></tr>';
     }).join("");
