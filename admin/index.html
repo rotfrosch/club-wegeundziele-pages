@@ -67,7 +67,7 @@ if (!isClubAdmin) {
       const lastSignIn = user.last_sign_in_at ? formatter.format(new Date(user.last_sign_in_at)) : "Noch nie";
       const status = user.is_active && user.email_confirmed ? "Aktiv" : (user.is_active ? "Unbestätigt" : "Inaktiv");
       const action = user.email_confirmed
-        ? '<span class="small">Zugang über Schalter entfernen</span>'
+        ? (user.can_delete_user ? '<button class="btn-danger delete-user" type="button" data-email="' + escapeHtml(user.email) + '">Benutzer löschen</button>' : '<span class="small">' + escapeHtml(user.delete_block_reason || "Nur Club-Zugang entfernbar") + '</span>')
         : (user.club_enabled ? '<button class="btn-danger delete-invitation" type="button" data-email="' + escapeHtml(user.email) + '">Einladung löschen</button>' : '<span class="small">Keine Club-Einladung</span>');
       return '<tr data-user-id="' + escapeHtml(user.id) + '"><td><strong>' + escapeHtml(user.display_name || user.email) + '</strong><br><span class="small">' + escapeHtml(user.email) + '</span></td><td><span class="status ' + (status === "Aktiv" ? "live" : "") + '">' + status + '</span></td><td>' + escapeHtml(lastSignIn) + '</td><td><label class="permission-toggle"><input type="checkbox" ' + (user.club_enabled ? "checked" : "") + '><span>' + (user.club_enabled ? "Freigeschaltet" : "Gesperrt") + '</span></label></td><td>' + action + '</td></tr>';
     }).join("");
@@ -95,6 +95,21 @@ if (!isClubAdmin) {
       try {
         await callAdmin({ action:"delete_invitation", user_id:row.dataset.userId });
         showNotice("Einladung für " + email + " wurde gelöscht.", true);
+        await loadUsers();
+      } catch (error) {
+        showNotice(error.message);
+        event.currentTarget.disabled = false;
+      }
+    }));
+    usersBody.querySelectorAll(".delete-user").forEach(button => button.addEventListener("click", async event => {
+      const row = event.currentTarget.closest("tr");
+      const email = event.currentTarget.dataset.email || "diesen Benutzer";
+      if (!confirm("Benutzer " + email + " wirklich vollständig löschen? Diese Aktion kann nicht rückgängig gemacht werden.")) return;
+      event.currentTarget.disabled = true;
+      showNotice("Benutzer wird vollständig gelöscht …", true);
+      try {
+        await callAdmin({ action:"delete_user", user_id:row.dataset.userId });
+        showNotice("Benutzer " + email + " wurde vollständig gelöscht.", true);
         await loadUsers();
       } catch (error) {
         showNotice(error.message);
