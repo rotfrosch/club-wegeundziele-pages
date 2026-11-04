@@ -806,7 +806,7 @@ select{
       <div class="field-card country-card">
         <label>🌍 Land</label>
         <div class="select-shell">
-          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien</option></select>
+          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien</option><option value="SI">🇸🇮 Slowenien</option></select>
         </div>
       </div>
 
@@ -969,7 +969,8 @@ const countryCheckDates={
   AT:'27.10.2026',
   IT:'27.10.2026',
   FR:'27.10.2026',
-  ES:'04.11.2026'
+  ES:'04.11.2026',
+  SI:'04.11.2026'
 };
 
 const hrBase={
@@ -1163,6 +1164,17 @@ const esBase={
   mHeavyTrailer:{label:'Wohnmobil über 3,5 t + Anhänger',toll:'Betreiberklasse prüfen',tollNote:'Gesamtachsen und Bereifung sind betreiberabhängig',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:true}
 };
 
+const siBase={
+  car:{label:'Pkw',toll:'E-Vignette · Klasse 2A',tollNote:'bis 3,5 t · typischer Pkw · Anhänger ohne eigene Vignette',speed:'50 · 90 · 110 · 130 km/h',box:'Keine Mautbox nötig',trailer:false},
+  m35:{label:'Wohnmobil bis 3,5 t',toll:'E-Vignette · Klasse 2A',tollNote:'als Wohnmobil zugelassen · Höhe über Vorderachse unerheblich',speed:'50 · 90 · 110 · 130 km/h',box:'Keine Mautbox nötig',trailer:false},
+  m2:{label:'Wohnmobil über 3,5 t · 2 Achsen',toll:'DarsGo · R2',tollNote:'2 Achsen · streckenabhängig · Emissionsklassen zählen',speed:'50 · 80 · 80 · 80 km/h',box:'DarsGo-Unit Pflicht',trailer:false},
+  m3:{label:'Wohnmobil über 3,5 t · 3 Achsen',toll:'DarsGo · R3',tollNote:'3 Achsen · streckenabhängig · Emissionsklassen zählen',speed:'50 · 80 · 80 · 80 km/h',box:'DarsGo-Unit Pflicht',trailer:false},
+  m4:{label:'Wohnmobil über 3,5 t · 4+ Achsen',toll:'DarsGo · R4',tollNote:'4+ Achsen · streckenabhängig · Emissionsklassen zählen',speed:'50 · 80 · 80 · 80 km/h',box:'DarsGo-Unit Pflicht',trailer:false},
+  carTrailer:{label:'Pkw + Wohnwagen / Anhänger',toll:'E-Vignette · Klasse 2A',tollNote:'nur Zugfahrzeug · Anhänger ohne eigene Vignette',speed:'50 · 90 · 100 · 100 km/h',box:'Keine Mautbox nötig',trailer:true},
+  m35Trailer:{label:'Wohnmobil bis 3,5 t + Anhänger',toll:'E-Vignette · Klasse 2A',tollNote:'nur Zugfahrzeug · Anhänger ohne eigene Vignette',speed:'50 · 90 · 100 · 100 km/h',box:'Keine Mautbox nötig',trailer:true},
+  mHeavyTrailer:{label:'Wohnmobil über 3,5 t + Anhänger',toll:'DarsGo · nach Gesamtachsen',tollNote:'Achsen von Wohnmobil und Anhänger zusammenzählen',speed:'50 · 80 · 80 · 80 km/h',box:'DarsGo-Unit Pflicht',trailer:true}
+};
+
 function setSelectOptions(select, options){
   const current=select.value;
   select.innerHTML=options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
@@ -1181,8 +1193,9 @@ function configureSubcontrols(){
   const franceHeavySolo=(c==='FR' && ['m2','m3','m4'].includes(v));
   const franceTrailer=(c==='FR' && ['carTrailer','m35Trailer','mHeavyTrailer'].includes(v));
   const franceNeedsLength=(c==='FR' && ['carTrailer','m35Trailer'].includes(v));
+  const sloveniaHeavyTrailer=(c==='SI' && v==='mHeavyTrailer');
 
-  const needsSubcontrols=(isTrailer && c!=='ES') || italySolo4 || italyHeavySolo || italyNeedsLength ||
+  const needsSubcontrols=(isTrailer && c!=='ES' && c!=='SI') || sloveniaHeavyTrailer || italySolo4 || italyHeavySolo || italyNeedsLength ||
     franceNeedsHeight || franceHeavySolo || franceTrailer || franceNeedsLength;
   subcontrols.classList.toggle('show',needsSubcontrols);
 
@@ -1323,11 +1336,31 @@ function configureSubcontrols(){
     }
   }
 
+  if(c==='SI' && v==='mHeavyTrailer'){
+    brakeField.style.display='';
+    motorhomeAxlesField.style.display='';
+    trailerAxlesField.style.display='';
+    brakeLabel.textContent='🚐 Anhängerart';
+    setSelectOptions(brake,[
+      {value:'siLightCamper',label:'leichter Anhänger / Wohnanhänger'},
+      {value:'siOther',label:'anderer Anhänger'}
+    ]);
+    setSelectOptions(motorhomeAxles,[
+      {value:'2',label:'2 Achsen'},
+      {value:'3',label:'3 Achsen'},
+      {value:'4',label:'4+ Achsen'}
+    ]);
+    setSelectOptions(trailerAxles,[
+      {value:'1',label:'1 Achse'},
+      {value:'2',label:'2 Achsen'}
+    ]);
+  }
+
 }
 
 function current(){
   if(!country.value||!vehicle.value) return null;
-  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:country.value==='ES'?esBase:hrBase;
+  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:country.value==='ES'?esBase:country.value==='SI'?siBase:hrBase;
   if(!source[vehicle.value]) return null;
   const d={...source[vehicle.value]};
 
@@ -1447,6 +1480,15 @@ function current(){
     }
   }
 
+  if(country.value==='SI' && vehicle.value==='mHeavyTrailer'){
+    const wa=Number(motorhomeAxles.value||2);
+    const ta=Number(trailerAxles.value||1);
+    const total=wa>=4?4:wa+ta;
+    d.toll=total<=2?'DarsGo · R2':total===3?'DarsGo · R3':'DarsGo · R4';
+    d.tollNote=`${wa>=4?'4+':wa} Achsen Wohnmobil + ${ta} Achse${ta===1?'':'n'} Anhänger`;
+    d.speed=brake.value==='siOther'?'50 · 70 · 70 · 70 km/h':'50 · 80 · 80 · 80 km/h';
+  }
+
   return d;
 }
 
@@ -1509,6 +1551,12 @@ function render(){
     boxNote.textContent='Vía-T optional · ohne Box nur freigegebene Bar-/Kartenspur nutzen';
     specialNote.textContent='ZBE · V16 · Winter · Parken · Rettungsgasse · Anhänger';
     abbrNote.textContent='DGT · ZBE · MMA · Vía-T · V16 · OBU · EETS';
+  }else if(country.value==='SI'){
+    overtakeResult.textContent='🟢 Nicht automatisch betroffen';
+    overtakeNote.textContent='Spezielle Lkw-Verbote betreffen Güterfahrzeuge; Beschilderung und örtliche Anordnungen beachten.';
+    boxNote.textContent='bis 3,5 t: E-Vignette · über 3,5 t: DarsGo-Unit verpflichtend';
+    specialNote.textContent='Winterausrüstung · Lichtpflicht · Rettungsgasse · Karawankentunnel · Anhänger';
+    abbrNote.textContent='DARS · DarsGo · NDM · R2 · R3 · R4 · EURO/CO₂ · ZPrCP';
   }
 
   renderDetail();
@@ -1551,6 +1599,8 @@ function renderDetail(){
     renderDetailFR(d);
   }else if(country.value==='ES'){
     renderDetailES(d);
+  }else if(country.value==='SI'){
+    renderDetailSI(d);
   }else{
     renderDetailHR(d);
   }
@@ -2061,6 +2111,60 @@ function renderDetailFR(d){
         <div class="mini"><b>3PMSF</b>Three-Peak Mountain Snowflake – anerkanntes Winterreifensymbol</div>
       </div>
     `;
+    detailGrid.innerHTML='';
+  }
+}
+
+function renderDetailSI(d){
+  const heavy=['m2','m3','m4','mHeavyTrailer'].includes(vehicle.value);
+  if(activeTab==='toll'){
+    detailTitle.textContent='💶 Maut Slowenien im Detail';
+    detailText.innerHTML=heavy?`
+      <p style="margin-top:0">Fahrzeuge mit einer technisch zulässigen Gesamtmasse über 3,5 t benötigen vor der ersten Fahrt auf einer mautpflichtigen Autobahn oder Schnellstraße eine registrierte <b>DarsGo-Unit</b>.</p>
+      <p>Die streckenabhängige Maut richtet sich nach <b>Gesamtachsen der Fahrzeugkombination</b>, EURO- und CO₂-Emissionsklasse sowie dem Abschnitt. Für deine Auswahl gilt: <b>${d.toll}</b>.</p>`:`
+      <p style="margin-top:0">Fahrzeuge bis einschließlich 3,5 t benötigen auf slowenischen Autobahnen und Schnellstraßen eine kennzeichengebundene <b>E‑Vignette</b>.</p>
+      <p>Als Wohnmobil zugelassene Fahrzeuge gehören unabhängig von der Höhe über der Vorderachse in <b>Klasse 2A</b>. Anhänger benötigen keine eigene Vignette.</p>`;
+    detailGrid.innerHTML=heavy?`
+      <div class="mini"><b>R2</b>2 Achsen der Fahrzeugkombination.</div><div class="mini"><b>R3</b>3 Achsen der Fahrzeugkombination.</div><div class="mini"><b>R4</b>4 oder mehr Achsen der Fahrzeugkombination.</div>`:`
+      <div class="mini"><b>2A</b>Pkw und zugelassene Wohnmobile bis 3,5 t · mit oder ohne Anhänger.</div><div class="mini"><b>2B</b>Bestimmte zweispurige Fahrzeuge bis 3,5 t ab 1,30 m Höhe über der Vorderachse; echte Wohnmobile bleiben 2A.</div><div class="mini"><b>Karawankentunnel</b>Separate Tunnelmaut; auf weiteren mautpflichtigen Abschnitten gelten E‑Vignette beziehungsweise DarsGo.</div>`;
+  }else if(activeTab==='speed'){
+    detailTitle.textContent='🚦 Tempo Slowenien im Detail';
+    detailText.innerHTML=`<p style="margin-top:0">Für deine Auswahl gilt: <b>${d.speed}</b>.</p><p>Reihenfolge: <b>innerorts · Landstraße · Schnellstraße · Autobahn</b>.</p><p>Gespanne mit einem Zugfahrzeug bis 3,5 t dürfen auf Autobahnen und Schnellstraßen höchstens 100 km/h fahren. Für Fahrzeuge über 3,5 t gilt grundsätzlich 80 km/h; bei schweren Kombinationen mit einem Anhänger, der weder leicht noch Wohnanhänger ist, 70 km/h.</p>`;
+    detailGrid.innerHTML=`<div class="mini"><b>🚐 Wohnmobil bis 3,5 t</b>50 · 90 · 110 · 130 km/h</div><div class="mini"><b>🚙 Gespann bis 3,5 t Zugfahrzeug</b>50 · 90 · 100 · 100 km/h</div><div class="mini"><b>🚍 Wohnmobil über 3,5 t</b>50 · 80 · 80 · 80 km/h</div>`;
+  }else if(activeTab==='overtake'){
+    detailTitle.textContent='🚛 Überholverbot Slowenien im Detail';
+    detailText.innerHTML=`<p style="margin-top:0">Ein regulär zugelassenes Wohnmobil ist <b>nicht allein wegen seines Gewichts automatisch</b> von einem speziellen Lkw-Überholverbot betroffen.</p><p>Allgemeine Überholverbote, Zusatzzeichen, Wechselverkehrszeichen und zeitweilige Verkehrsmaßnahmen gelten trotzdem. Rechtsüberholen ist grundsätzlich verboten; nach dem Überholen wieder auf den rechten Fahrstreifen wechseln.</p>`;
+    detailGrid.innerHTML=`<div class="mini"><b>🟢 Wohnmobil</b>Nicht automatisch als Güterfahrzeug behandelt.</div><div class="mini"><b>⛔ Beschilderung</b>Allgemeine und örtliche Verbote beachten.</div><div class="mini"><b>➡️ Autobahn</b>Links überholen, danach rechts einordnen.</div>`;
+  }else if(activeTab==='box'){
+    detailTitle.textContent='📡 Mautbox Slowenien im Detail';
+    detailText.innerHTML=heavy?`<p style="margin-top:0"><b>DarsGo ist für Fahrzeuge über 3,5 t verpflichtend.</b> Fahrzeug, Kennzeichen sowie EURO- und CO₂-Emissionsdaten müssen korrekt registriert sein. Vor jeder Fahrt ist die an der Unit eingestellte Achszahl der gesamten Kombination zu kontrollieren.</p>`:`<p style="margin-top:0">Bis einschließlich 3,5 t ist keine Mautbox nötig. Die <b>E‑Vignette</b> wird auf das Kennzeichen und die richtige Mautklasse registriert; Kennzeichen, Zulassungsland und Gültigkeitsbeginn vor dem Kauf sorgfältig prüfen.</p>`;
+    detailGrid.innerHTML=heavy?`<div class="mini"><b>Pflicht</b>DarsGo-Unit vor Einfahrt in das Mautnetz.</div><div class="mini"><b>Achsen</b>Gesamtachsen vor jeder Fahrt korrekt einstellen.</div><div class="mini"><b>EURO / CO₂</b>Nachweise beeinflussen den Tarif.</div>`:`<div class="mini"><b>E‑Vignette</b>Kennzeichengebunden · keine Klebevignette.</div><div class="mini"><b>Anhänger</b>Keine eigene E‑Vignette.</div>`;
+  }else if(activeTab==='special'){
+    detailTitle.textContent='⚠️ Besonderheiten Slowenien';
+    detailText.innerHTML=`<ul style="margin:0;padding-left:20px">
+      <li style="margin:9px 0"><b>Winterausrüstung:</b> vom 15.11. bis 15.03. sowie bei winterlichen Straßenverhältnissen. Bis 3,5 t Winterreifen auf allen Rädern oder Sommerreifen plus passende Schneeketten; über 3,5 t Winterreifen mindestens auf den Antriebsrädern oder Sommerreifen plus Ketten. Schwere Fahrzeuge müssen zusätzlich eine Schaufel mitführen.</li>
+      <li style="margin:9px 0"><b>Profiltiefe:</b> Reifen, die als Winterausrüstung zählen, mindestens 3 mm.</li>
+      <li style="margin:9px 0"><b>Licht:</b> Abblend- oder vorgeschriebenes Tagfahrlicht auch tagsüber.</li>
+      <li style="margin:9px 0"><b>Rettungsgasse:</b> bei Stau zwischen dem äußerst linken Fahrstreifen und dem unmittelbar rechts danebenliegenden Fahrstreifen bilden.</li>
+      <li style="margin:9px 0"><b>Karawankentunnel:</b> separate Tunnelmaut und aktuelle Verkehrs-/Sicherheitsinformationen beachten.</li>
+      <li style="margin:9px 0"><b>Sicherheitsausrüstung:</b> Warnweste griffbereit halten und beim Verlassen eines notgestoppten Fahrzeugs auf Autobahn oder Schnellstraße tragen. Warndreieck, Verbandkasten und Ersatzrad/Pannensystem entsprechend Fahrzeug und Zulassungsstaat prüfen.</li>
+    </ul>`;
+    detailGrid.innerHTML=`<div class="mini"><b>❄️ Winter</b>15.11.–15.03. und zusätzlich bei winterlichen Verhältnissen.</div><div class="mini"><b>💡 Licht</b>Tagsüber vorgeschrieben.</div><div class="mini"><b>🚑 Rettungsgasse</b>Zwischen linkem und angrenzendem Fahrstreifen.</div><div class="mini"><b>🛣 Tunnel</b>Karawanken separat bemautet.</div>`;
+  }else if(activeTab==='sources'){
+    detailTitle.textContent='📚 Quellen & Recherche Slowenien';
+    detailText.innerHTML=`<div style="display:grid;gap:12px">
+      <div><span class="badge ok">🟢 bestätigt</span> <b>E‑Vignette/2A–2B:</b> <a href="https://www.dars.si/Content/doc/seznam%20izmerjenih%20vozil/Seznam%20izmerjenih%20vozil_The%20list%20of%20measured%20vehicles.pdf" target="_blank" rel="noopener">DARS – Fahrzeugklassifizierung</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>DarsGo über 3,5 t:</b> <a href="https://www.darsgo.si/" target="_blank" rel="noopener">offizielles DarsGo-Portal</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Achsen und Emissionsklassen:</b> <a href="https://www.darsgo.si/portal/static/cms/pdf/en/Toll%20Domain%20Statement%20EETS%20DARS_V2_26102022_ENG.pdf" target="_blank" rel="noopener">DARS – Toll Domain Statement</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Tempo und Verkehrsrecht:</b> <a href="https://pisrs.si/Pis.web/pregledPredpisa?sop=2010-01-5733" target="_blank" rel="noopener">PISRS – ZPrCP</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Allgemeine Tempolimits:</b> <a href="https://www.policija.si/eng/prevention/traffic-safety/94876-traffic-safety" target="_blank" rel="noopener">Slowenische Polizei – Traffic safety</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Winterausrüstung:</b> <a href="https://www.policija.si/eng/prevention/traffic-safety/winter-in-road-traffic-provisions-on-winter-equipment" target="_blank" rel="noopener">Slowenische Polizei – Winter equipment</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Pflichtausrüstung:</b> <a href="https://pisrs.si/pregledPredpisa?id=PRAV13680" target="_blank" rel="noopener">PISRS – Pravilnik o delih in opremi vozil</a></div>
+    </div><p style="margin-top:16px"><b>Prüfstand:</b> 04.11.2026 · Aufbau und Funktionsumfang entsprechen den fünf bestehenden Ländern.</p>`;
+    detailGrid.innerHTML='';
+  }else if(activeTab==='abbr'){
+    detailTitle.textContent='📖 Abkürzungen Slowenien';
+    detailText.innerHTML=`<div class="detail-grid" style="margin-top:0"><div class="mini"><b>DARS</b>Slowenische Autobahngesellschaft</div><div class="mini"><b>DarsGo</b>Elektronische streckenabhängige Maut über 3,5 t</div><div class="mini"><b>NDM</b>Največja dovoljena masa – höchstzulässige Masse</div><div class="mini"><b>R2 / R3 / R4</b>DarsGo-Klassen nach Gesamtachsen</div><div class="mini"><b>EURO / CO₂</b>Emissionsklassen mit Einfluss auf den Tarif</div><div class="mini"><b>ZPrCP</b>Slowenisches Straßenverkehrsregelgesetz</div></div>`;
     detailGrid.innerHTML='';
   }
 }
