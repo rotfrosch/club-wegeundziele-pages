@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Kroatien – Maut & Länderinfo</title>
+<title>Europa – Maut & Länderinfo</title>
 <style>
 :root{--bg:#f4f7fb;--card:#fff;--line:#dbe2ea;--text:#18202a;--muted:#687482;--green:#eaf8ef;--green-b:#bfe8cc;--yellow:#fff7df;--yellow-b:#f2dfa2;--red:#fff0f0;--red-b:#f1c7c7;--blue:#edf6ff;--blue-b:#c7ddf3;--accent:#527a39;--shadow:0 8px 24px rgba(31,45,61,.08)}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}.wrap{max-width:1180px;margin:0 auto;padding:18px}.hero{border-radius:22px;overflow:hidden;min-height:155px;background:linear-gradient(90deg,rgba(4,46,91,.96),rgba(4,46,91,.76) 48%,rgba(4,46,91,.18)),linear-gradient(135deg,#0c5d99,#64b6d8 55%,#f3d48d);color:#fff;padding:28px 30px;box-shadow:var(--shadow);display:flex;align-items:end;justify-content:space-between;gap:20px}.hero h1{font-size:42px;line-height:1;margin:0 0 8px}.hero .sub{font-size:20px;font-weight:700}.hero .checked{margin-top:12px;display:inline-block;background:rgba(0,0,0,.25);padding:8px 12px;border-radius:999px;font-size:14px}.flag{font-size:76px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.2))}.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:20px;margin-top:18px;box-shadow:0 4px 18px rgba(31,45,61,.045)}.panel h2{margin:0 0 16px;font-size:22px}
@@ -806,7 +806,7 @@ select{
       <div class="field-card country-card">
         <label>🌍 Land</label>
         <div class="select-shell">
-          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option></select>
+          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien</option></select>
         </div>
       </div>
 
@@ -968,7 +968,8 @@ const countryCheckDates={
   HR:'26.10.2026',
   AT:'27.10.2026',
   IT:'27.10.2026',
-  FR:'27.10.2026'
+  FR:'27.10.2026',
+  ES:'04.11.2026'
 };
 
 const hrBase={
@@ -1151,6 +1152,17 @@ const frBase={
   }
 };
 
+const esBase={
+  car:{label:'Pkw',toll:'streckenabhängige Maut',tollNote:'keine Vignette · Betreiberklasse prüfen',speed:'20/30/50 · 90 · 120 · 120 km/h',box:'Vía-T optional',trailer:false},
+  m35:{label:'Wohnmobil bis 3,5 t',toll:'streckenabhängige Maut',tollNote:'keine Vignette · Achsen/Räder und Betreiberklasse prüfen',speed:'20/30/50 · 90 · 120 · 120 km/h',box:'Vía-T optional',trailer:false},
+  m2:{label:'Wohnmobil über 3,5 t · 2 Achsen',toll:'Betreiberklasse prüfen',tollNote:'Fahrzeugart, Achsen und Bereifung sind maßgeblich',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:false},
+  m3:{label:'Wohnmobil über 3,5 t · 3 Achsen',toll:'Betreiberklasse prüfen',tollNote:'keine landesweit einheitliche Wohnmobilklasse',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:false},
+  m4:{label:'Wohnmobil über 3,5 t · 4+ Achsen',toll:'Betreiberklasse prüfen',tollNote:'keine landesweit einheitliche Wohnmobilklasse',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:false},
+  carTrailer:{label:'Pkw + Wohnwagen / Anhänger',toll:'Betreiberklasse prüfen',tollNote:'Achsen und Zwillingsbereifung können die Klasse erhöhen',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:true},
+  m35Trailer:{label:'Wohnmobil bis 3,5 t + Anhänger',toll:'Betreiberklasse prüfen',tollNote:'Achsen und Zwillingsbereifung können die Klasse erhöhen',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:true},
+  mHeavyTrailer:{label:'Wohnmobil über 3,5 t + Anhänger',toll:'Betreiberklasse prüfen',tollNote:'Gesamtachsen und Bereifung sind betreiberabhängig',speed:'20/30/50 · 80 · 90 · 90 km/h',box:'Vía-T optional',trailer:true}
+};
+
 function setSelectOptions(select, options){
   const current=select.value;
   select.innerHTML=options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
@@ -1170,7 +1182,7 @@ function configureSubcontrols(){
   const franceTrailer=(c==='FR' && ['carTrailer','m35Trailer','mHeavyTrailer'].includes(v));
   const franceNeedsLength=(c==='FR' && ['carTrailer','m35Trailer'].includes(v));
 
-  const needsSubcontrols=isTrailer || italySolo4 || italyHeavySolo || italyNeedsLength ||
+  const needsSubcontrols=(isTrailer && c!=='ES') || italySolo4 || italyHeavySolo || italyNeedsLength ||
     franceNeedsHeight || franceHeavySolo || franceTrailer || franceNeedsLength;
   subcontrols.classList.toggle('show',needsSubcontrols);
 
@@ -1315,7 +1327,7 @@ function configureSubcontrols(){
 
 function current(){
   if(!country.value||!vehicle.value) return null;
-  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:hrBase;
+  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:country.value==='ES'?esBase:hrBase;
   if(!source[vehicle.value]) return null;
   const d={...source[vehicle.value]};
 
@@ -1491,6 +1503,12 @@ function render(){
     boxNote.textContent='Télépéage optional · Free Flow A79 / A13-A14 / A4 Boulay';
     specialNote.textContent='Crit’Air/ZFE · Angles Morts >3,5 t · Winter · Free Flow · Spurregel';
     abbrNote.textContent='ASFA · PTAC · PTRA · ZFE · EETS · OBU · MLFF · 3PMSF';
+  }else if(country.value==='ES'){
+    overtakeResult.textContent='🟢 Nicht automatisch betroffen';
+    overtakeNote.textContent='Kein pauschales Wohnmobil-Überholverbot; Verkehrszeichen und örtliche Anordnungen beachten.';
+    boxNote.textContent='Vía-T optional · ohne Box nur freigegebene Bar-/Kartenspur nutzen';
+    specialNote.textContent='ZBE · V16 · Winter · Parken · Rettungsgasse · Anhänger';
+    abbrNote.textContent='DGT · ZBE · MMA · Vía-T · V16 · OBU · EETS';
   }
 
   renderDetail();
@@ -1531,6 +1549,8 @@ function renderDetail(){
     renderDetailIT(d);
   }else if(country.value==='FR'){
     renderDetailFR(d);
+  }else if(country.value==='ES'){
+    renderDetailES(d);
   }else{
     renderDetailHR(d);
   }
@@ -2041,6 +2061,97 @@ function renderDetailFR(d){
         <div class="mini"><b>3PMSF</b>Three-Peak Mountain Snowflake – anerkanntes Winterreifensymbol</div>
       </div>
     `;
+    detailGrid.innerHTML='';
+  }
+}
+
+function renderDetailES(d){
+  if(activeTab==='toll'){
+    detailTitle.textContent='💶 Maut Spanien im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0">Spanien hat <b>keine landesweite Vignette</b>. Viele Autovías und Autobahnen sind kostenfrei; auf einzelnen Autopistas, Radial- und Zufahrtsautobahnen wird streckenabhängig Maut erhoben.</p>
+      <p>Die Einstufung ist <b>betreiberabhängig</b>. Typisch sind <b>Ligero, Pesado 1 und Pesado 2</b>. Achszahl, Fahrzeugart, Anhänger und Zwillingsbereifung können entscheidend sein – das zulässige Gesamtgewicht allein reicht nicht immer.</p>
+      <p>Für deine Auswahl zeigt der Schnellcheck deshalb bewusst: <b>${d.toll}</b>.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🚐 Ligero</b>Typisch: Motorräder, Pkw und bestimmte zweiachsige Fahrzeuge mit vier Rädern; genaue Definition beim Betreiber prüfen.</div>
+      <div class="mini"><b>🚍 Pesado 1</b>Typisch: bestimmte Fahrzeuge mit 2–3 Achsen sowie Kombinationen mit Anhänger/Zwillingsbereifung.</div>
+      <div class="mini"><b>🚚 Pesado 2</b>Typisch: Fahrzeuge oder Kombinationen mit insgesamt 4+ Achsen; Betreiberregel maßgeblich.</div>`;
+  }
+  else if(activeTab==='speed'){
+    detailTitle.textContent='🚦 Tempo Spanien im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0">Für deine Auswahl gilt: <b>${d.speed}</b>.</p>
+      <p>Reihenfolge: <b>innerorts · Landstraße · Schnellstraße · Autobahn</b>. Innerorts gelten grundsätzlich 20 km/h auf Straßen mit niveaugleicher Fahrbahn/Gehweg, 30 km/h bei einer Fahrspur je Richtung und 50 km/h bei zwei oder mehr Fahrspuren je Richtung.</p>
+      <p><b>Wohnmobile bis 3,5 t</b> folgen außerorts grundsätzlich den Pkw-Grenzen. Wohnmobile über 3,5 t und Fahrzeuge mit Anhänger: 80 km/h auf konventionellen Straßen, 90 km/h auf Autovía/Autobahn.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🚐 bis 3,5 t</b>20/30/50 · 90 · 120 · 120 km/h</div>
+      <div class="mini"><b>🚍 über 3,5 t</b>20/30/50 · 80 · 90 · 90 km/h</div>
+      <div class="mini"><b>🚙 mit Anhänger</b>20/30/50 · 80 · 90 · 90 km/h</div>`;
+  }
+  else if(activeTab==='overtake'){
+    detailTitle.textContent='🚛 Überholverbot Spanien im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0">Für ein regulär zugelassenes Wohnmobil besteht <b>kein pauschales Überholverbot allein wegen der Wohnmobil-Eigenschaft</b>.</p>
+      <p><b>R-305</b> verbietet das Überholen allgemein. <b>R-306</b> richtet sich dagegen an Lkw über 3,5 t; ein als Wohnmobil zugelassenes Fahrzeug wird dadurch nicht allein wegen seines Gewichts zum Lkw. Zusatzzeichen sowie strecken- oder situationsbezogene Anordnungen bleiben maßgeblich.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🟢 Wohnmobil</b>Nicht automatisch von einem besonderen Lkw-Verbot erfasst.</div>
+      <div class="mini"><b>⛔ R-305 / R-306</b>Allgemeines Verbot beziehungsweise besonderes Lkw-Verbot unterscheiden.</div>
+      <div class="mini"><b>🔎 Vor Ort</b>Zusatzzeichen und Wechselverkehrszeichen haben Vorrang.</div>`;
+  }
+  else if(activeTab==='box'){
+    detailTitle.textContent='📡 Mautbox Spanien im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0"><b>Vía-T ist optional.</b> Ein kompatibles elektronisches Mautgerät kann auf entsprechend gekennzeichneten Spuren genutzt werden.</p>
+      <p>Ohne Box nur Spuren wählen, die ausdrücklich für Karte oder Bargeld freigegeben sind. Eine ausschließlich mit Vía-T gekennzeichnete Spur darf ohne funktionierendes Gerät nicht benutzt werden.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>✅ Optional</b>Für normale Urlaubsfahrten ist keine Mautbox vorgeschrieben.</div>
+      <div class="mini"><b>💳 Ohne Box</b>Freigegebene Karten-/Barspur nutzen und Ticket bis zur Ausfahrt aufbewahren.</div>
+      <div class="mini"><b>📡 Mit Box</b>Vía-T beziehungsweise kompatibles EETS-Gerät und passende Fahrzeugklasse prüfen.</div>`;
+  }
+  else if(activeTab==='special'){
+    detailTitle.textContent='⚠️ Besonderheiten Spanien';
+    detailText.innerHTML=`
+      <ul style="margin:0;padding-left:20px">
+        <li style="margin:9px 0"><b>ZBE-Umweltzonen:</b> Regeln werden kommunal festgelegt. Ausländische Fahrzeuge erhalten keine spanische DGT-Plakette; für deutsche, österreichische, dänische und französische Plaketten nennt die DGT eine spanische Entsprechung. Trotzdem vor jeder Stadtfahrt die örtliche Zufahrtsregel und eine mögliche Registrierung/Genehmigung prüfen.</li>
+        <li style="margin:9px 0"><b>V16-Warnleuchte:</b> Seit 01.01.2026 ist für in Spanien zugelassene Fahrzeuge die vernetzte V16 maßgeblich. Ausländische Fahrzeuge im internationalen Verkehr dürfen die nach ihrem Zulassungsstaat vorgeschriebene gleichwertige Pannenausrüstung verwenden.</li>
+        <li style="margin:9px 0"><b>Parken mit dem Wohnmobil:</b> grundsätzlich wie andere Fahrzeuge, sofern örtliche Regeln eingehalten werden. Nichts darf über den Fahrzeugumriss hinausragen; das Fahrzeug darf nur auf den Reifen stehen, wobei Sicherungskeile erlaubt sind. Flüssigkeiten aus dem Wohnbereich dürfen nicht abgelassen werden.</li>
+        <li style="margin:9px 0"><b>Winter:</b> keine allgemeine landesweite Winterreifenfrist. Schneeketten oder Winterausrüstung können durch Beschilderung oder Verkehrsmaßnahmen angeordnet werden.</li>
+        <li style="margin:9px 0"><b>Mitführpflichten:</b> Für in Spanien zugelassene Wohnmobile nennt die DGT Warnweste sowie Ersatz-/Notrad mit Werkzeug oder ein zulässiges alternatives Pannensystem. Bei ausländischer Zulassung zusätzlich die internationalen Regeln und die Vorschriften des Zulassungsstaats beachten.</li>
+        <li style="margin:9px 0"><b>Während der Fahrt:</b> Betten im Wohnbereich dürfen nicht benutzt werden; alle Personen müssen zugelassene Sitzplätze und Rückhaltesysteme nutzen.</li>
+        <li style="margin:9px 0"><b>Rettungsgasse:</b> bei Schrittgeschwindigkeit oder Stillstand auf Autobahnen und Autovías bilden – bei zwei Fahrstreifen mittig, bei drei oder mehr zwischen dem linken und dem direkt angrenzenden Fahrstreifen.</li>
+      </ul>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🏙 ZBE</b>Kommunale Regeln vor Einfahrt prüfen.</div>
+      <div class="mini"><b>🚨 Panne</b>V16-/Warndreieck-Regel nach Zulassungsstaat beachten.</div>
+      <div class="mini"><b>🅿️ Parken</b>Nichts über den Fahrzeugumriss hinaus · Sicherungskeile erlaubt · keine Flüssigkeiten ablassen.</div>
+      <div class="mini"><b>❄️ Winter</b>Anordnungen und Beschilderung sind entscheidend.</div>`;
+  }
+  else if(activeTab==='sources'){
+    detailTitle.textContent='📚 Quellen & Recherche Spanien';
+    detailText.innerHTML=`
+      <div style="display:grid;gap:12px">
+        <div><span class="badge ok">🟢 bestätigt</span> <b>Verkehrsregeln und Tempo:</b> <a href="https://www.boe.es/buscar/act.php?id=BOE-A-2003-23514" target="_blank" rel="noopener">BOE – Reglamento General de Circulación</a></div>
+        <div><span class="badge ok">🟢 bestätigt</span> <b>Wohnmobile 2026:</b> <a href="https://www.dgt.es/export/sites/web-DGT/.galleries/downloads/muevete-con-seguridad/normas-de-trafico/NOR-normativa-general/report_Instruccion-PROT-2026_04-Autocaravanas.pdf" target="_blank" rel="noopener">DGT – Instrucción PROT 2026/04</a></div>
+        <div><span class="badge ok">🟢 bestätigt</span> <b>V16:</b> <a href="https://www.dgt.es/muevete-con-seguridad/tecnologia-e-innovacion-en-carretera/Dispositivos-de-presenalizacion-V16" target="_blank" rel="noopener">DGT – dispositivos V16</a></div>
+        <div><span class="badge ok">🟢 bestätigt</span> <b>Umweltplakette/ZBE:</b> <a href="https://www.dgt.es/nuestros-servicios/tu-vehiculo/tus-vehiculos/distintivo-ambiental/" target="_blank" rel="noopener">DGT – distintivo ambiental</a></div>
+        <div><span class="badge ok">🟢 bestätigt</span> <b>Mautklassen 2026:</b> <a href="https://cdn.transportes.gob.es/portal-web-seitt/media/document/tarifas_r2_2026.pdf" target="_blank" rel="noopener">SEITT – Tarifas R-2 2026</a></div>
+        <div><span class="badge ok">🟢 bestätigt</span> <b>Beispiel Betreibertarif:</b> <a href="https://www.autopistas.com/wp-content/uploads/2025/12/26_004-Castellana-AP6_AP51_AP61-T26.pdf" target="_blank" rel="noopener">Autopistas – AP-6/AP-51/AP-61 2026</a></div>
+      </div>
+      <p style="margin-top:16px"><b>Prüfstand:</b> 04.11.2026 · Schnellcheck und Detailstruktur an die vier bestehenden Länder angeglichen. Betreiber- und Kommunalregeln müssen vor der konkreten Fahrt erneut geprüft werden.</p>`;
+    detailGrid.innerHTML='';
+  }
+  else if(activeTab==='abbr'){
+    detailTitle.textContent='📖 Abkürzungen Spanien';
+    detailText.innerHTML=`
+      <div class="detail-grid" style="margin-top:0">
+        <div class="mini"><b>DGT</b>Dirección General de Tráfico</div>
+        <div class="mini"><b>ZBE</b>Zona de Bajas Emisiones</div>
+        <div class="mini"><b>MMA</b>Masa Máxima Autorizada</div>
+        <div class="mini"><b>Vía-T</b>Elektronisches Mautsystem</div>
+        <div class="mini"><b>V16</b>Vernetzte Pannenwarnleuchte</div>
+        <div class="mini"><b>OBU</b>On-Board Unit</div>
+        <div class="mini"><b>EETS</b>European Electronic Toll Service</div>
+      </div>`;
     detailGrid.innerHTML='';
   }
 }
