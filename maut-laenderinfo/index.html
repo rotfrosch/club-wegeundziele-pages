@@ -806,7 +806,7 @@ select{
       <div class="field-card country-card">
         <label>🌍 Land</label>
         <div class="select-shell">
-          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien</option><option value="SI">🇸🇮 Slowenien</option></select>
+          <select id="country" required><option value="" selected disabled>Bitte Reiseland auswählen</option><option value="HR">🇭🇷 Kroatien</option><option value="AT">🇦🇹 Österreich</option><option value="IT">🇮🇹 Italien</option><option value="FR">🇫🇷 Frankreich</option><option value="ES">🇪🇸 Spanien</option><option value="SI">🇸🇮 Slowenien</option><option value="DE">🇩🇪 Deutschland</option></select>
         </div>
       </div>
 
@@ -970,7 +970,8 @@ const countryCheckDates={
   IT:'27.10.2026',
   FR:'27.10.2026',
   ES:'04.11.2026',
-  SI:'04.11.2026'
+  SI:'04.11.2026',
+  DE:'04.11.2026'
 };
 
 const hrBase={
@@ -1175,6 +1176,17 @@ const siBase={
   mHeavyTrailer:{label:'Wohnmobil über 3,5 t + Anhänger',toll:'DarsGo · nach Gesamtachsen',tollNote:'Achsen von Wohnmobil und Anhänger zusammenzählen',speed:'50 · 80 · 80 · 80 km/h',box:'DarsGo-Unit Pflicht',trailer:true}
 };
 
+const deBase={
+  car:{label:'Pkw',toll:'Keine allgemeine Straßenmaut',tollNote:'keine Vignette · einzelne Sonderstrecken separat',speed:'50 · 100 · 100/frei* · frei*',box:'Keine Mautbox nötig',trailer:false},
+  m35:{label:'Wohnmobil bis 3,5 t',toll:'Keine allgemeine Straßenmaut',tollNote:'reines Wohnmobil · keine Vignette',speed:'50 · 100 · 100/frei* · frei*',box:'Keine Mautbox nötig',trailer:false},
+  m2:{label:'Wohnmobil über 3,5 t · 2 Achsen',toll:'Keine Maut für reines Wohnmobil',tollNote:'nicht für Güterkraftverkehr bestimmt oder eingesetzt',speed:'50 · 80 · 100 · 100 km/h',box:'Keine Mautbox nötig',trailer:false},
+  m3:{label:'Wohnmobil über 3,5 t · 3 Achsen',toll:'Keine Maut für reines Wohnmobil',tollNote:'nicht für Güterkraftverkehr bestimmt oder eingesetzt',speed:'50 · 80 · 100 · 100 km/h',box:'Keine Mautbox nötig',trailer:false},
+  m4:{label:'Wohnmobil über 3,5 t · 4+ Achsen',toll:'Keine Maut für reines Wohnmobil',tollNote:'nicht für Güterkraftverkehr bestimmt oder eingesetzt',speed:'50 · 80 · 100 · 100 km/h',box:'Keine Mautbox nötig',trailer:false},
+  carTrailer:{label:'Pkw + Wohnwagen / Anhänger',toll:'Keine allgemeine Straßenmaut',tollNote:'keine Vignette · Anhänger ohne eigene Maut',speed:'50 · 80 · 80 · 80 km/h',box:'Keine Mautbox nötig',trailer:true},
+  m35Trailer:{label:'Wohnmobil bis 3,5 t + Anhänger',toll:'Keine allgemeine Straßenmaut',tollNote:'reines Wohnmobil · Anhänger ohne eigene Maut',speed:'50 · 80 · 80 · 80 km/h',box:'Keine Mautbox nötig',trailer:true},
+  mHeavyTrailer:{label:'Wohnmobil über 3,5 t + Anhänger',toll:'Keine Maut für reines Wohnmobil',tollNote:'kein entgeltlicher/geschäftsmäßiger Güterverkehr',speed:'50 · 60 · 60/80* · 80 km/h',box:'Keine Mautbox nötig',trailer:true}
+};
+
 function setSelectOptions(select, options){
   const current=select.value;
   select.innerHTML=options.map(o=>`<option value="${o.value}">${o.label}</option>`).join('');
@@ -1194,9 +1206,11 @@ function configureSubcontrols(){
   const franceTrailer=(c==='FR' && ['carTrailer','m35Trailer','mHeavyTrailer'].includes(v));
   const franceNeedsLength=(c==='FR' && ['carTrailer','m35Trailer'].includes(v));
   const sloveniaHeavyTrailer=(c==='SI' && v==='mHeavyTrailer');
+  const germanyLightTrailer=(c==='DE' && ['carTrailer','m35Trailer'].includes(v));
+  const germanyHeavySolo=(c==='DE' && ['m2','m3','m4'].includes(v));
 
-  const needsSubcontrols=(isTrailer && c!=='ES' && c!=='SI') || sloveniaHeavyTrailer || italySolo4 || italyHeavySolo || italyNeedsLength ||
-    franceNeedsHeight || franceHeavySolo || franceTrailer || franceNeedsLength;
+  const needsSubcontrols=(isTrailer && c!=='ES' && c!=='SI' && c!=='DE') || sloveniaHeavyTrailer || italySolo4 || italyHeavySolo || italyNeedsLength ||
+    franceNeedsHeight || franceHeavySolo || franceTrailer || franceNeedsLength || germanyLightTrailer || germanyHeavySolo;
   subcontrols.classList.toggle('show',needsSubcontrols);
 
   [brakeField,motorhomeAxlesField,weightBandField,heightBandField,comboWeightField,trailerAxlesField,lengthField].forEach(
@@ -1356,11 +1370,29 @@ function configureSubcontrols(){
     ]);
   }
 
+  if(c==='DE'){
+    if(germanyLightTrailer){
+      brakeField.style.display='';
+      brakeLabel.textContent='🚙 Tempo-Zulassung des Gespanns';
+      setSelectOptions(brake,[
+        {value:'de80',label:'regulär · höchstens 80 km/h'},
+        {value:'de100',label:'amtliche Tempo-100-Zulassung'}
+      ]);
+    }
+    if(germanyHeavySolo){
+      weightBandField.style.display='';
+      setSelectOptions(weightBand,[
+        {value:'deUpto75',label:'über 3,5 t bis 7,5 t'},
+        {value:'deOver75',label:'über 7,5 t'}
+      ]);
+    }
+  }
+
 }
 
 function current(){
   if(!country.value||!vehicle.value) return null;
-  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:country.value==='ES'?esBase:country.value==='SI'?siBase:hrBase;
+  const source=country.value==='AT'?atBase:country.value==='IT'?itBase:country.value==='FR'?frBase:country.value==='ES'?esBase:country.value==='SI'?siBase:country.value==='DE'?deBase:hrBase;
   if(!source[vehicle.value]) return null;
   const d={...source[vehicle.value]};
 
@@ -1489,6 +1521,15 @@ function current(){
     d.speed=brake.value==='siOther'?'50 · 70 · 70 · 70 km/h':'50 · 80 · 80 · 80 km/h';
   }
 
+  if(country.value==='DE'){
+    if(vehicle.value==='carTrailer'||vehicle.value==='m35Trailer'){
+      d.speed=brake.value==='de100'?'50 · 80 · 100 · 100 km/h':'50 · 80 · 80 · 80 km/h';
+    }
+    if(['m2','m3','m4'].includes(vehicle.value)){
+      d.speed=weightBand.value==='deOver75'?'50 · 60 · 60/80* · 80 km/h':'50 · 80 · 100 · 100 km/h';
+    }
+  }
+
   return d;
 }
 
@@ -1557,6 +1598,13 @@ function render(){
     boxNote.textContent='bis 3,5 t: E-Vignette · über 3,5 t: DarsGo-Unit verpflichtend';
     specialNote.textContent='Winterausrüstung · Lichtpflicht · Rettungsgasse · Karawankentunnel · Anhänger';
     abbrNote.textContent='DARS · DarsGo · NDM · R2 · R3 · R4 · EURO/CO₂ · ZPrCP';
+  }else if(country.value==='DE'){
+    const heavy=['m2','m3','m4','mHeavyTrailer'].includes(vehicle.value);
+    overtakeResult.textContent=heavy?'🔴 Zeichen 277 beachten':'🟢 Nicht automatisch betroffen';
+    overtakeNote.textContent=heavy?'Wohnmobile über 3,5 t fallen grundsätzlich unter das Zeichen 277.':'Allgemeine Verbote und Zusatzzeichen gelten trotzdem.';
+    boxNote.textContent='Für reine Wohnmobile keine Mautbox und keine Vignette';
+    specialNote.textContent='Umweltzonen · Winterreifen · Rettungsgasse · Fahrstreifen · Parken · Pflichtausrüstung';
+    abbrNote.textContent='BALM · BFStrMG · StVO · StVZO · zGM · OBU · 3PMSF';
   }
 
   renderDetail();
@@ -1601,6 +1649,8 @@ function renderDetail(){
     renderDetailES(d);
   }else if(country.value==='SI'){
     renderDetailSI(d);
+  }else if(country.value==='DE'){
+    renderDetailDE(d);
   }else{
     renderDetailHR(d);
   }
@@ -2111,6 +2161,88 @@ function renderDetailFR(d){
         <div class="mini"><b>3PMSF</b>Three-Peak Mountain Snowflake – anerkanntes Winterreifensymbol</div>
       </div>
     `;
+    detailGrid.innerHTML='';
+  }
+}
+
+function renderDetailDE(d){
+  const v=vehicle.value;
+  const heavy=['m2','m3','m4','mHeavyTrailer'].includes(v);
+  const trailer=['carTrailer','m35Trailer','mHeavyTrailer'].includes(v);
+
+  if(activeTab==='toll'){
+    detailTitle.textContent='💶 Maut Deutschland im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0">Für Pkw und <b>reine Wohnmobile</b> besteht in Deutschland keine allgemeine Autobahnvignette und keine allgemeine Straßenmaut.</p>
+      <p>Die Lkw-Maut ab mehr als 3,5 t technisch zulässiger Gesamtmasse betrifft Fahrzeuge, die <b>für den Güterkraftverkehr bestimmt oder dafür verwendet</b> werden. Ein eindeutig als Wohnmobil eingerichtetes und ausschließlich zu Wohnzwecken genutztes Fahrzeug fällt grundsätzlich nicht darunter.</p>
+      <p><b>Achtung bei Sondernutzung:</b> Wird ein Wohnmobil oder seine Kombination entgeltlich oder geschäftsmäßig im Güterkraftverkehr beziehungsweise Werkverkehr eingesetzt oder ist es baulich für den Güterkraftverkehr bestimmt, muss die Einstufung vor der Fahrt mit Toll Collect beziehungsweise BALM geklärt werden. Privates Reisegepäck allein löst diese Mautpflicht nicht aus.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🚐 Reines Wohnmobil</b>Keine allgemeine Lkw-Maut – auch über 3,5 t.</div>
+      <div class="mini"><b>📦 Güterbeförderung</b>Zweckbestimmung und tatsächliche Nutzung können Mautpflicht auslösen.</div>
+      <div class="mini"><b>🛣 Sondermaut</b>Warnowtunnel (B 103n, Rostock) und Herrentunnel (B 104, Lübeck); aktuelle Fahrzeugklasse und Tarif vor der Fahrt prüfen.</div>`;
+  }else if(activeTab==='speed'){
+    detailTitle.textContent='🚦 Tempo Deutschland im Detail';
+    detailText.innerHTML=`
+      <p style="margin-top:0">Für deine Auswahl gilt: <b>${d.speed}</b>.</p>
+      <p>Reihenfolge: <b>innerorts · Landstraße · Kraftfahrstraße · Autobahn</b>. Bei der Kraftfahrstraße ist der Ausbau entscheidend: Für Fahrzeuge bis 3,5 t ohne Anhänger gelten auf einer normalen Kraftfahrstraße 100 km/h; auf richtungsgetrennten Fahrbahnen oder bei mindestens zwei markierten Fahrstreifen je Richtung besteht ohne Schild keine allgemeine Höchstgeschwindigkeit. Dann gilt die Richtgeschwindigkeit 130 km/h.</p>
+      <p>Wohnmobile über 3,5 t bis einschließlich 7,5 t dürfen außerorts 80 km/h und aufgrund der Wohnmobil-Ausnahme auf Autobahnen und Kraftfahrstraßen 100 km/h fahren. Über 7,5 t gelten 60 km/h außerorts; 80 km/h gelten auf der Autobahn und auf entsprechend ausgebauten, richtungsgetrennten Kraftfahrstraßen, sonst 60 km/h.</p>
+      <p>Gespanne mit einem Zugfahrzeug bis 3,5 t fahren grundsätzlich 80 km/h. Mit amtlicher Tempo‑100-Zulassung sind 100 km/h auf Autobahnen und Kraftfahrstraßen erlaubt. Dafür müssen die Voraussetzungen bei jeder Fahrt weiter erfüllt sein: Die Anhängerreifen müssen jünger als sechs Jahre und mindestens für die Geschwindigkeitskategorie L ausgelegt sein; Bescheinigung und gesiegelte Tempo‑100-Plakette müssen den Vorschriften entsprechen. Wohnmobile über 3,5 t mit Anhänger bleiben bei 60 km/h außerorts; 80 km/h gelten auf Autobahnen und entsprechend ausgebauten Kraftfahrstraßen.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>🚐 Bis 3,5 t</b>50 · 100 · 100/frei* · frei* · Richtgeschwindigkeit 130.</div>
+      <div class="mini"><b>🚍 Über 3,5 bis 7,5 t</b>50 · 80 · 100 · 100 km/h.</div>
+      <div class="mini"><b>🚚 Über 7,5 t</b>50 · 60 · 60/80* · 80 km/h.</div>
+      <div class="mini"><b>🚙 Leichtes Gespann</b>Regulär 80; mit amtlicher Freigabe auf Autobahn/Kraftfahrstraße 100.</div>`;
+  }else if(activeTab==='overtake'){
+    detailTitle.textContent='🚛 Überholverbot Deutschland im Detail';
+    detailText.innerHTML=heavy?`
+      <p style="margin-top:0"><b>Zeichen 277 gilt grundsätzlich auch für Wohnmobile über 3,5 t.</b> Es verbietet Kraftfahrzeugen über 3,5 t einschließlich ihrer Anhänger das Überholen mehrspuriger Kraftfahrzeuge und von Krafträdern mit Beiwagen. Ausgenommen sind Pkw und Kraftomnibusse.</p>
+      <p>Zusatzzeichen können die Gewichtsgrenze verändern oder den Anwendungsbereich erweitern. Allgemeine Überholverbote und Fahrstreifensignale sind zusätzlich zu beachten.</p>`:`
+      <p style="margin-top:0">Dein ausgewähltes Fahrzeug fällt <b>nicht allein aufgrund des Gewichts</b> unter Zeichen 277. Allgemeine Überholverbote, Zusatzzeichen und örtliche Anordnungen gelten trotzdem.</p>
+      <p>Ein Zusatzzeichen kann das Verbot ausdrücklich auf weitere Fahrzeuge – beispielsweise Pkw mit Anhänger – ausdehnen.</p>`;
+    detailGrid.innerHTML=`
+      <div class="mini"><b>⛔ Zeichen 277</b>Grundsätzlich für Kraftfahrzeuge über 3,5 t einschließlich ihrer Anhänger.</div>
+      <div class="mini"><b>✅ Ausnahmen</b>Pkw und Kraftomnibusse sind vom Grundzeichen ausgenommen.</div>
+      <div class="mini"><b>🔎 Zusatzzeichen</b>Können Grenze und Fahrzeugkreis verändern.</div>`;
+  }else if(activeTab==='box'){
+    detailTitle.textContent='📡 Mautbox Deutschland im Detail';
+    detailText.innerHTML=`<p style="margin-top:0">Für ein ausschließlich zu Wohnzwecken genutztes, eindeutig als Wohnmobil erkennbares Fahrzeug ist <b>keine Mautbox erforderlich</b>. Das gilt auch bei mehr als 3,5 t, solange das Fahrzeug weder für Güterkraftverkehr bestimmt noch dafür eingesetzt wird.</p><p>Bei Umbauten, wechselnder Nutzung oder Güterbeförderung sollte die Fahrzeugzuordnung vorab mit Toll Collect geklärt werden. Eine freiwillige Registrierung als nicht mautpflichtiges Fahrzeug kann Kontrollen vereinfachen, ersetzt aber nicht die rechtlichen Voraussetzungen.</p>`;
+    detailGrid.innerHTML=`<div class="mini"><b>🚐 Privat genutzt</b>Keine OBU und keine Vignette.</div><div class="mini"><b>📦 Sondernutzung</b>Mautpflicht vor Fahrt klären.</div><div class="mini"><b>📝 Registrierung</b>Freiwillige Meldung nicht mautpflichtiger Fahrzeuge möglich.</div>`;
+  }else if(activeTab==='special'){
+    detailTitle.textContent='⚠️ Besonderheiten Deutschland';
+    detailText.innerHTML=`<ul style="margin:0;padding-left:20px">
+      <li style="margin:9px 0"><b>Umweltzonen:</b> In bestehenden Umweltzonen ist grundsätzlich die grüne Umweltplakette erforderlich. Die Plakette gilt bundesweit, örtliche Ausnahmen und aufgehobene Zonen müssen aktuell geprüft werden; die Regelung betrifft auch ausländische Fahrzeuge.</li>
+      <li style="margin:9px 0"><b>Winterreifen:</b> keine feste Kalenderfrist. Bei Glatteis, Schneeglätte, Schneematsch, Eis- oder Reifglätte müssen normale Wohnmobile der Klasse M1 an allen Rädern Reifen mit Alpine-Symbol haben – auch über 3,5 t. Für M2/M3 sowie N2/N3 gelten besondere Achsregeln; deshalb die Fahrzeugklasse in Feld J prüfen. Die gesetzliche Mindestprofiltiefe beträgt 1,6 mm.</li>
+      <li style="margin:9px 0"><b>Schneeketten:</b> bei Zeichen 268 vorgeschrieben; mit Schneeketten höchstens 50 km/h.</li>
+      <li style="margin:9px 0"><b>Rettungsgasse:</b> sobald Fahrzeuge auf Autobahnen oder Außerortsstraßen mit mindestens zwei Fahrstreifen je Richtung nur noch Schrittgeschwindigkeit fahren oder stillstehen – zwischen dem äußerst linken und dem unmittelbar rechts danebenliegenden Fahrstreifen.</li>
+      <li style="margin:9px 0"><b>Pflichtausrüstung:</b> Warndreieck und Verbandmaterial mitführen. Für in Deutschland zugelassene Pkw, Lkw und Busse ist mindestens eine Warnweste vorgeschrieben; bei Kraftfahrzeugen über 3,5 t ist zusätzlich eine getrennte Warnleuchte vorgeschrieben. Bei ausländischer Zulassung auch die Regeln des Zulassungsstaats beachten.</li>
+      <li style="margin:9px 0"><b>Unterlegkeile:</b> können nach § 41 StVZO abhängig von zulässigem Gesamtgewicht, Achszahl und Anhängerbauart vorgeschrieben sein – insbesondere bei Kraftfahrzeugen über 4 t sowie bestimmten Anhängern über 750 kg.</li>
+      <li style="margin:9px 0"><b>Rechtsabbiegen über 3,5 t:</b> innerorts mit Schrittgeschwindigkeit, wenn mit geradeaus fahrendem Radverkehr oder querendem Fußgängerverkehr zu rechnen ist.</li>
+      <li style="margin:9px 0"><b>Linker Fahrstreifen:</b> Auf Außerortsstraßen mit mindestens drei markierten Fahrstreifen je Richtung dürfen alle Kraftfahrzeuge mit Anhänger den äußerst linken Fahrstreifen grundsätzlich nur zum Linksabbiegen benutzen. Ein allein fahrendes Wohnmobil ist davon nicht allein wegen mehr als 3,5 t betroffen, solange es nicht als Lkw eingestuft ist.</li>
+      <li style="margin:9px 0"><b>Parken, Übernachten oder Campen:</b> Eine einmalige Übernachtung zur notwendigen Fahrtunterbrechung beziehungsweise Wiederherstellung der Fahrtüchtigkeit ist dort möglich, wo das Parken erlaubt ist und keine örtliche Regel entgegensteht. Mehrtägiger Aufenthalt oder campingähnliche Nutzung – etwa mit Markise, Möbeln oder Grill – kann erlaubnispflichtige Sondernutzung sein. Beschilderung und kommunale Regeln gehen vor.</li>
+      <li style="margin:9px 0"><b>Regelmäßiges Parken:</b> Fahrzeuge über 7,5 t sowie Anhänger über 2 t dürfen in bestimmten Wohn-, Erholungs-, Kur- und Klinikgebieten zwischen 22 und 6 Uhr sowie an Sonn- und Feiertagen nicht regelmäßig parken; gekennzeichnete Parkplätze sind ausgenommen.</li>
+      <li style="margin:9px 0"><b>Sonn- und Feiertagsfahrverbot:</b> Ein reines privat genutztes Wohnmobil fällt nicht automatisch darunter. Das Verbot betrifft die geschäftsmäßige oder entgeltliche Güterbeförderung mit Lkw über 7,5 t beziehungsweise Anhängern hinter Lkw.</li>
+      <li style="margin:9px 0"><b>Gespanne:</b> Tempo 100 gilt nur mit amtlich bestätigter Kombination und ausschließlich auf Autobahnen sowie Kraftfahrstraßen. Anhängerreifen müssen bei jeder Fahrt jünger als sechs Jahre und mindestens mit Geschwindigkeitskategorie L gekennzeichnet sein. Gleichwertige ausländische Bestätigungen müssen auf Deutsch vorliegen oder amtlich beglaubigt übersetzt und mitgeführt werden.</li>
+      <li style="margin:9px 0"><b>Flüssiggasanlage:</b> Bei in Deutschland zulassungspflichtigen Freizeitfahrzeugen ist die Gasanlage vor der ersten Inbetriebnahme, nach prüfpflichtigen Änderungen und anschließend alle 24 Monate nach § 60 StVZO prüfen zu lassen.</li>
+    </ul>`;
+    detailGrid.innerHTML=`<div class="mini"><b>🏙 Umweltzone</b>Grüne Plakette und aktuelle kommunale Zone prüfen.</div><div class="mini"><b>❄️ Winter</b>Situative Pflicht statt festem Zeitraum.</div><div class="mini"><b>🚑 Rettungsgasse</b>Zwischen linkem und direkt angrenzendem Fahrstreifen.</div><div class="mini"><b>🧰 Ausrüstung</b>Warndreieck · Verbandkasten · Warnweste · gegebenenfalls Warnleuchte und Unterlegkeile.</div>`;
+  }else if(activeTab==='sources'){
+    detailTitle.textContent='📚 Quellen & Recherche Deutschland';
+    detailText.innerHTML=`<div style="display:grid;gap:12px">
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Mautpflicht und Wohnmobil-Abgrenzung:</b> <a href="https://www.toll-collect.de/de/toll_collect/rund_um_die_maut/mautpflichtige_fahrzeuge/mautpflichtige_fahrzeuge.html" target="_blank" rel="noopener">Toll Collect – mautpflichtige Fahrzeuge</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Nicht mautpflichtige Fahrzeuge:</b> <a href="https://www.toll-collect.de/de/toll_collect/rund_um_die_maut/mautbefreiung/mautbefreiung.html" target="_blank" rel="noopener">Toll Collect – Mautbefreiung</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Warnow- und Herrentunnel:</b> <a href="https://www.bmv.de/SharedDocs/DE/Artikel/StB/oepp-geschaeftsmodelle-f-modell.html" target="_blank" rel="noopener">Bundesverkehrsministerium – F-Modell</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Tempo, Rettungsgasse und Verkehrsregeln:</b> <a href="https://www.gesetze-im-internet.de/stvo_2013/" target="_blank" rel="noopener">Bundesrecht – StVO</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Wohnmobil 3,5–7,5 t mit 100 km/h:</b> <a href="https://www.gesetze-im-internet.de/stvoausnv_12/__1.html" target="_blank" rel="noopener">12. Ausnahmeverordnung zur StVO</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Tempo-100-Gespanne:</b> <a href="https://www.gesetze-im-internet.de/stvoausnv_9/BJNR317100998.html" target="_blank" rel="noopener">9. Ausnahmeverordnung zur StVO</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Umweltzonen:</b> <a href="https://www.umweltbundesamt.de/themen/luft/luftschadstoffe/feinstaub/umweltzonen-in-deutschland" target="_blank" rel="noopener">Umweltbundesamt – Umweltzonen</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Pflichtausrüstung und Reifen:</b> <a href="https://www.gesetze-im-internet.de/stvzo_2012/" target="_blank" rel="noopener">Bundesrecht – StVZO</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Flüssiggasanlagen:</b> <a href="https://www.gesetze-im-internet.de/stvzo_2012/__60.html" target="_blank" rel="noopener">§ 60 StVZO – Prüfung alle 24 Monate</a></div>
+      <div><span class="badge ok">🟢 bestätigt</span> <b>Übernachten und Sondernutzung:</b> <a href="https://www.bundestag.de/resource/blob/436736/169f51f531dbf9ba3d784505d91e0c44/wd-3-145-16-pdf-data.pdf" target="_blank" rel="noopener">Deutscher Bundestag – Rechtsrahmen öffentlicher Parkraum</a></div>
+    </div><p style="margin-top:16px"><b>Prüfstand:</b> 04.11.2026 · Aufbau und Funktionsumfang entsprechen den sechs bestehenden Ländern.</p>`;
+    detailGrid.innerHTML='';
+  }else if(activeTab==='abbr'){
+    detailTitle.textContent='📖 Abkürzungen Deutschland';
+    detailText.innerHTML=`<div class="detail-grid" style="margin-top:0"><div class="mini"><b>BALM</b>Bundesamt für Logistik und Mobilität</div><div class="mini"><b>BFStrMG</b>Bundesfernstraßenmautgesetz</div><div class="mini"><b>StVO</b>Straßenverkehrs-Ordnung</div><div class="mini"><b>StVZO</b>Straßenverkehrs-Zulassungs-Ordnung</div><div class="mini"><b>zGM</b>zulässige Gesamtmasse</div><div class="mini"><b>OBU</b>On-Board Unit – Mautgerät</div><div class="mini"><b>3PMSF</b>Alpine-Symbol für Winterreifen</div></div>`;
     detailGrid.innerHTML='';
   }
 }
