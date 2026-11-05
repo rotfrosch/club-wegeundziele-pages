@@ -509,6 +509,35 @@ select option{
   .hero-logo{width:min(100%,420px) !important}
   .hero-logo img{max-height:62px !important}
 }
+
+/* Finale Kopfzeile: Europa links, Produktlogo mittig, Wohnmobil rechts */
+.hero-title-line{
+  margin-bottom:3px !important;
+}
+.hero-left .sub{
+  font-size:14px !important;
+  line-height:1.2 !important;
+  font-weight:700 !important;
+  color:#25292d !important;
+  text-align:left !important;
+  white-space:nowrap;
+}
+.hero-logo{
+  width:min(100%,517px) !important;
+  padding:0 8px !important;
+}
+.hero-logo img{
+  max-height:108px !important;
+}
+@media(max-width:900px){
+  .hero-logo{width:min(100%,460px) !important}
+  .hero-logo img{max-height:92px !important}
+}
+@media(max-width:620px){
+  .hero-left .sub{font-size:12px !important}
+  .hero-logo{width:100% !important;padding:0 6px !important}
+  .hero-logo img{max-height:66px !important}
+}
 @media(max-width:620px){
   .hero-logo{width:100% !important}
   .hero-logo img{max-height:54px !important}
@@ -716,6 +745,12 @@ select option{
   }
 }
 
+/* Finale mobile Größen – nach allen älteren Mobilregeln anwenden */
+@media(max-width:620px){
+  .hero-left .sub{font-size:12px !important;line-height:1.2 !important}
+  .hero-logo{width:100% !important;padding:0 6px !important}
+  .hero-logo img{max-height:66px !important}
+}
 
 .detail a{
   color:#315f78;
@@ -777,11 +812,11 @@ select{
       <span class="hero-title-text">Europa</span>
       <span class="hero-flag">🇪🇺</span>
     </div>
-    <div class="sub">Maut &amp; Länderinfo</div>
+    <div class="sub">Die Freiheit des Reisen's</div>
   </div>
 
-  <div class="hero-logo" aria-label="Campions Club">
-    <img src="../assets/campions-club-logo.png" alt="Campions Club Logo">
+  <div class="hero-logo" aria-label="Maut und Länderinfo – Wege und Ziele">
+    <img src="../assets/maut-laenderinfo-logo.png" alt="Maut &amp; Länderinfo – Wege &amp; Ziele">
   </div>
 
   <div class="hero-right-stack">
